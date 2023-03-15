@@ -199,7 +199,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: any)
 		let fromToken = getSymbol(decodedDataOfInput.path[0])
 		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
-		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(profitAmount), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
+		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(profitAmount * 50), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
 		console.log(`Buy : from (${profitAmount} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
 		let changedPoolIn = Number(poolIn) + Number(profitAmount);
 		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy));
