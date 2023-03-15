@@ -1,0 +1,32 @@
+{
+    "0xbd08A0670F25782345521f46b9D6b2210e2D8372": {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "decimal": 18,
+        "pair": "0xfe561c1aebf902769aad117146779d870573eccc"
+    },
+    "0x9865b1dE34261e45761866Dc00496DD6fC9924b1": {
+        "name": "Real Wrapped Ether",
+        "symbol": "WETH",
+        "decimal": 18,
+        "pair": ""
+    },
+    "0x08a553d8d7c93DC5467273050487A4e7a86b5dfE": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimal": 18,
+        "pair": ""
+    },
+    "0x849cf7e17Bc85CD2b1448ef41C733f1A9F157324": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "decimal": 18,
+        "pair": ""
+    },
+    "0x96C517FD32D5eCbcc0d20bCA49dAF3848a6F78F0": {
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "decimal": 18,
+        "pair": ""
+    }
+}

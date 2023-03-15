@@ -1,0 +1,18 @@
+# dependencies
+node_modules
+# production
+logs/*.log
+dist
+.vscode
+files
+# misc
+.env
+.env.*
+save_tx.csv
+public
+
+npm-debug.log*
+yarn.lock
+yarn-error.log*
+package-lock.json
+installation.md

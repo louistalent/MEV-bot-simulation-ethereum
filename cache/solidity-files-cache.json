@@ -1,0 +1,561 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\dexfactory.sol": {
+      "lastModificationDate": 1676194719271,
+      "contentHash": "a15e057a3aef55e3965fc225fc9b7783",
+      "sourceName": "contracts/dexfactory.sol",
+      "solcConfig": {
+        "version": "0.5.16",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "=0.5.16"
+      ],
+      "artifacts": [
+        "DEXSwapERC20",
+        "DEXSwapFactory",
+        "DEXSwapPair",
+        "IDEXSwapCallee",
+        "IDEXSwapERC20",
+        "IDEXSwapFactory",
+        "IDEXSwapPair",
+        "IERC20",
+        "Math",
+        "SafeMath",
+        "UQ112x112"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\dexRouter.sol": {
+      "lastModificationDate": 1676246635270,
+      "contentHash": "3706332fa18b979f4151bb14b2a63b4d",
+      "sourceName": "contracts/dexRouter.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "DEXSwapLibrary",
+        "DEXSwapRouter",
+        "IDEXSwapFactory",
+        "IDEXSwapPair",
+        "IDEXSwapRouter",
+        "IERC20",
+        "IWETH",
+        "SafeMath",
+        "TransferHelper"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\Eastershib.sol": {
+      "lastModificationDate": 1676192057070,
+      "contentHash": "39e1c377b64e6cffdf046f5a6791bac6",
+      "sourceName": "contracts/Eastershib.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "EASTERSHIB",
+        "IPancakeSwapFactory",
+        "IPancakeSwapPair",
+        "IPancakeSwapRouter",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\ERC20_USDT.sol": {
+      "lastModificationDate": 1676245411717,
+      "contentHash": "e193fd40264a3bd673fdbd95ac2d12f2",
+      "sourceName": "contracts/ERC20_USDT.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "ERC20_USDT",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\ERC20_WETH.sol": {
+      "lastModificationDate": 1678192778551,
+      "contentHash": "baf103dedf301c09a374705211e9931a",
+      "sourceName": "contracts/ERC20_WETH.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "ERC20",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\FakeUsdt.sol": {
+      "lastModificationDate": 1676192057072,
+      "contentHash": "e86e6c81d616c4e88d08fd53441a38a8",
+      "sourceName": "contracts/FakeUsdt.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "FakeUsdt",
+        "IERC20",
+        "Mintable",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\happyShibEth.sol": {
+      "lastModificationDate": 1676192057073,
+      "contentHash": "d520986909aa880166106494557d8014",
+      "sourceName": "contracts/happyShibEth.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "BALLS",
+        "Context",
+        "IPancakeSwapFactory",
+        "IPancakeSwapPair",
+        "IPancakeSwapRouter",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\IExchange.sol": {
+      "lastModificationDate": 1676192057073,
+      "contentHash": "560276d53519a80e2af8461db6d9f678",
+      "sourceName": "contracts/IExchange.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IPancakeSwapFactory",
+        "IPancakeSwapPair",
+        "IPancakeSwapRouter"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\staking.sol": {
+      "lastModificationDate": 1676192057075,
+      "contentHash": "ab6d94540f67046ac178d2f9f60fadc6",
+      "sourceName": "contracts/staking.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./IExchange.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "IERC20",
+        "Ownable",
+        "SafeMath",
+        "Staking"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\sharkbaby.sol": {
+      "lastModificationDate": 1676192057075,
+      "contentHash": "75380e6b0a9b128be5e95dabeadab8f1",
+      "sourceName": "contracts/sharkbaby.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./IExchange.sol",
+        "./libs.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "SHARKBABYOKEN"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\libs.sol": {
+      "lastModificationDate": 1676192057074,
+      "contentHash": "44a48d338a4f7cf5563c79c8524b4240",
+      "sourceName": "contracts/libs.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Context",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "D:\\louis\\task-2023\\2023-2-1-MEV-bot\\project\\contracts\\weth.sol": {
+      "lastModificationDate": 1676194638353,
+      "contentHash": "81c514e4e10a6e818e25a3f37f146acc",
+      "sourceName": "contracts/weth.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "WETH"
+      ]
+    }
+  }
+}
