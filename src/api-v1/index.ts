@@ -643,41 +643,37 @@ const sandwich = async (transaction: any, decodedDataOfInput: any, buyAmount: an
 				sellMaxPriorityFeePerGas_ = sellMaxPriorityFeePerGas_;
 			}
 			let buyTx = await buyToken(transaction, decodedDataOfInput, transaction.gas, buyAmount, sellAmount, ID, maxFeePerGas_, buyMaxPriorityFeePerGas_)
-			if (buyTx === "noamount") {
-				console.log("Insufficient amount of bot")
-				return false;
-			} else {
-				// ************ gas war Start ************
-				// infinite loop while 12.14 seconds
-				for (; ;) {
-					remainTime = ((Date.now() / 1000) - parseInt(res.timestamp)).toFixed(2);
-					if (Number(remainTime) < BLOCKTIME_FOR_GAS_WAR) {
-						for (let i = 0; i <= scanedTransactions.length - 1; i++) {
-							if (scanedTransactions[i].hash != transaction.hash
-								&&
-								scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] === decodedDataOfInput.path[decodedDataOfInput.path.length - 1]
-							) {
-								// if(the tx is EIP-1559 tx)
-								if (parseInt(buyMaxPriorityFeePerGas_) < parseInt(scanedTransactions[i].data.maxPriorityFeePerGas)) {
-									console.log('gas war')
-									//if the replace gas fee is high than real benefit, will stop and will push the gas at end time.
-									if ((realBenefit - MINIMUM_BENEFIT) <= ETHOfProfitAmount - (ETHAmountOfGas + (buyMaxPriorityFeePerGas_ * 0.000000001 * Number(scanedTransactions[i].data.gas)))) {//Stop
-										console.log(' break  break break break break break ')
-										break;
-									}
-									scanedTransactions[i].processed = true;
-									buyTx = await gasWar(decodedDataOfInput, transaction.gas, maxFeePerGas_, buyMaxPriorityFeePerGas_, buyAmount, buyTx[1])
-									buyMaxPriorityFeePerGas_ = buyMaxPriorityFeePerGas_ + (TIP / 2)
+
+			// ************ gas war Start ************
+			// infinite loop while 12.14 seconds
+			for (; ;) {
+				remainTime = ((Date.now() / 1000) - parseInt(res.timestamp)).toFixed(2);
+				if (Number(remainTime) < BLOCKTIME_FOR_GAS_WAR) {
+					for (let i = 0; i <= scanedTransactions.length - 1; i++) {
+						if (scanedTransactions[i].hash != transaction.hash
+							&&
+							scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] === decodedDataOfInput.path[decodedDataOfInput.path.length - 1]
+						) {
+							// if(the tx is EIP-1559 tx)
+							if (parseInt(buyMaxPriorityFeePerGas_) < parseInt(scanedTransactions[i].data.maxPriorityFeePerGas)) {
+								console.log('gas war')
+								//if the replace gas fee is high than real benefit, will stop and will push the gas at end time.
+								if ((realBenefit - MINIMUM_BENEFIT) <= ETHOfProfitAmount - (ETHAmountOfGas + (buyMaxPriorityFeePerGas_ * 0.000000001 * Number(scanedTransactions[i].data.gas)))) {//Stop
+									console.log(' break  break break break break break ')
+									break;
 								}
+								scanedTransactions[i].processed = true;
+								buyTx = await gasWar(decodedDataOfInput, transaction.gas, maxFeePerGas_, buyMaxPriorityFeePerGas_, buyAmount, buyTx[1])
+								buyMaxPriorityFeePerGas_ = buyMaxPriorityFeePerGas_ + (TIP / 2)
 							}
 						}
-					} else {
-						break;
 					}
+				} else {
+					break;
 				}
-
-				// ************ gas war End ************ 
 			}
+
+			// ************ gas war End ************ 
 		} else {
 			console.log('Reject Sandwich')
 			return false
