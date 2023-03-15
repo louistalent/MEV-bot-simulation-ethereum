@@ -555,12 +555,12 @@ const buyToken = async (transaction: any, decodedDataOfInput: any, gasLimit: any
 	try {
 		let currentTxNonce = await provider.getTransactionCount(owner);
 		console.log('currentTxNonce : ', currentTxNonce)
-		const amountIn = Parse(buyAmount);
-		const balanceOfBot = await provider.getBalance(owner.toString());
-		let balanceOfBot_ = Number(ethers.utils.formatEther(balanceOfBot));
-		if (balanceOfBot_ - LAST_SELL_GAS_FEE < Number(buyAmount)) {
-			return "noamount";
-		}
+		// const amountIn = Parse(buyAmount);
+		// const balanceOfBot = await provider.getBalance(owner.toString());
+		// let balanceOfBot_ = Number(ethers.utils.formatEther(balanceOfBot));
+		// if (balanceOfBot_ - LAST_SELL_GAS_FEE < Number(buyAmount)) {
+		// 	return "noamount";
+		// }
 		const calldataPath = [decodedDataOfInput.path[0], decodedDataOfInput.path[decodedDataOfInput.path.length - 1]];
 		console.log('Buy Token now')
 		let tx;
