@@ -342,6 +342,7 @@ const InspectMempool = async () => {
 										console.log('result swapExactETHForTokens: ')
 										ID = "ETH"
 										let amountOutMin = web3.utils.fromWei(result.amountOutMin.toString())
+										console.log("amountOutMin : ", amountOutMin)
 										if (Number(amountOutMin) === 0) {
 											console.log('TOKEN address', result.path[result.path.length - 1])
 											if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
