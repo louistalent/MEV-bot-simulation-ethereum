@@ -199,9 +199,9 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: any)
 		let fromToken = getSymbol(decodedDataOfInput.path[0])
 		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
-		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(profitAmount * 50), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
-		console.log(`Buy : from (${profitAmount * 50} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
-		let changedPoolIn = Number(poolIn) + Number(profitAmount * 50);
+		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(profitAmount), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
+		console.log(`Buy : from (${profitAmount} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
+		let changedPoolIn = Number(poolIn) + Number(profitAmount);
 		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy));
 
 		let UserTx = await signedUniswap2Router.getAmountOut(Parse(profitAmount), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
@@ -211,9 +211,9 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: any)
 		console.log(`User : from (${profitAmount} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
 		let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
 		console.log(`Sell : from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
-		let Revenue = Number(Format(backsell)) - Number(profitAmount * 50);
-		console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${profitAmount * 50} ${fromToken})= ${Revenue} ${fromToken}`)
-		if (Number(Format(backsell)) < Number(profitAmount * 50)) {
+		let Revenue = Number(Format(backsell)) - Number(profitAmount);
+		console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${profitAmount} ${fromToken})= ${Revenue} ${fromToken}`)
+		if (Number(Format(backsell)) < Number(profitAmount)) {
 			return null;
 		}
 		return [Revenue, frontbuy];
