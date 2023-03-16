@@ -356,8 +356,8 @@ const InspectMempool = async () => {
 											console.log('USDT tx')
 										}
 										if (toExist) {
-											console.log(pendingTxs.pending[addr][k].hash)
 											if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+												console.log(pendingTxs.pending[addr][k].hash)
 												scanedTransactions.push({
 													hash: pendingTxs.pending[addr][k].hash,
 													processed: false,
