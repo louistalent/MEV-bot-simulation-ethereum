@@ -54,6 +54,7 @@ let scanedTransactions: any = [];
 let nextBaseFee;
 let sameBotTxForGasWar: any = [];
 let mineBotNonces: any = [];
+let mempoollist: any = [];
 
 const SwapList = new ethers.utils.Interface([
 	'function swapExactTokensForTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
@@ -351,24 +352,28 @@ const InspectMempool = async () => {
 										result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
 										console.log('result swapExactETHForTokens: ')
 										ID = "ETH"
-										const toExist = result.path[result.path.length - 1] in approvedTokenList;
-										if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
-											console.log('USDT tx')
+										if (!mempoollist.includes(pendingTxs.pending[addr][k].hash)) {
+											console.log(pendingTxs.pending[addr][k].hash)
+											mempoollist.push(pendingTxs.pending[addr][k].hash);
 										}
-										if (toExist) {
-											if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-												console.log(pendingTxs.pending[addr][k].hash)
-												scanedTransactions.push({
-													hash: pendingTxs.pending[addr][k].hash,
-													processed: false,
-													data: pendingTxs.pending[addr][k],
-													decodedData: result,
-													ID: ID,
-													type: "swapExactETHForTokens"
-												})
-											}
-										} else {
-										}
+										// const toExist = result.path[result.path.length - 1] in approvedTokenList;
+										// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
+										// 	console.log('USDT tx')
+										// }
+										// if (toExist) {
+										// 	if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+										// 		console.log(pendingTxs.pending[addr][k].hash)
+										// 		scanedTransactions.push({
+										// 			hash: pendingTxs.pending[addr][k].hash,
+										// 			processed: false,
+										// 			data: pendingTxs.pending[addr][k],
+										// 			decodedData: result,
+										// 			ID: ID,
+										// 			type: "swapExactETHForTokens"
+										// 		})
+										// 	}
+										// } else {
+										// }
 									} catch (error: any) {
 										try {
 											// result = SwapList.decodeFunctionData('swapTokensForExactETH', pendingTxs.pending[addr][k].input)
