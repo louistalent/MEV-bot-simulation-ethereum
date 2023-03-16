@@ -178,7 +178,7 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	return botPurchaseAmount;
 
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: any) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number) => {
 	try {
 		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
 		const poolToken0 = await signedUniswap2Pair_.token0();
@@ -194,29 +194,39 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: any)
 			poolOut = web3.utils.fromWei(pairReserves._reserve0.toString())
 		}
 
+		let botAmountIn = profitAmount
 		let decimalIn = getDecimal(decodedDataOfInput.path[0])
 		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let fromToken = getSymbol(decodedDataOfInput.path[0])
 		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
-		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(profitAmount), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
-		console.log(`Buy : from (${profitAmount} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
-		let changedPoolIn = Number(poolIn) + Number(profitAmount);
+		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
+		console.log(`Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
+
+		let changedPoolIn = Number(poolIn) + Number(botAmountIn);
 		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy));
 
-		let UserTx = await signedUniswap2Router.getAmountOut(Parse(profitAmount), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
-		changedPoolIn = changedPoolIn + profitAmount;
+		let UserTx = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
+		changedPoolIn = changedPoolIn + botAmountIn;
 		changedPoolOut = changedPoolOut - Number(Format(UserTx));
+		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
 
-		console.log(`User : from (${profitAmount} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
-		let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
-		console.log(`Sell : from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
-		let Revenue = Number(Format(backsell)) - Number(profitAmount);
-		console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${profitAmount} ${fromToken})= ${Revenue} ${fromToken}`)
-		if (Number(Format(backsell)) < Number(profitAmount)) {
-			return null;
+		if (Number(UserTx) >= Number(ethers.utils.formatUnits(decodedDataOfInput.amountOutMin, decimalOut))) {
+			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
+			console.log(`Sell : from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
+			let Revenue = Number(Format(backsell)) - botAmountIn;
+			console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${botAmountIn} ${fromToken})= ${Revenue} ${fromToken}`)
+			if (Number(Format(backsell)) < botAmountIn) {
+				console.log(`bot will sandwith but no profit`)
+				return null
+			}
+			return [Revenue, frontbuy]
+		} else {
+			console.log(`User expected min amount is ${Number(Format(decodedDataOfInput.amountOutMin, decimalOut))} but got ${Number(Format(UserTx))}`)
+			console.log(`User transaction will fail. Cannot sandwith with ${botAmountIn} ETH`)
+			return null
 		}
-		return [Revenue, frontbuy];
+
 	} catch (error: any) {
 		console.log('calculateProfitAmount', error);
 	}
@@ -343,19 +353,17 @@ const InspectMempool = async () => {
 										ID = "ETH"
 										let amountOutMin = web3.utils.fromWei(result.amountOutMin.toString())
 										console.log("amountOutMin : ", amountOutMin)
-										if (Number(amountOutMin) === 0 || Number(amountOutMin) > 0.000000001) {
-											console.log(pendingTxs.pending[addr][k].hash)
-											console.log('TOKEN address', result.path[result.path.length - 1])
-											if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-												scanedTransactions.push({
-													hash: pendingTxs.pending[addr][k].hash,
-													processed: false,
-													data: pendingTxs.pending[addr][k],
-													decodedData: result,
-													ID: ID,
-													type: "swapExactETHForTokens"
-												})
-											}
+										console.log(pendingTxs.pending[addr][k].hash)
+										console.log('TOKEN address', result.path[result.path.length - 1])
+										if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+											scanedTransactions.push({
+												hash: pendingTxs.pending[addr][k].hash,
+												processed: false,
+												data: pendingTxs.pending[addr][k],
+												decodedData: result,
+												ID: ID,
+												type: "swapExactETHForTokens"
+											})
 										}
 									} catch (error: any) {
 										try {
