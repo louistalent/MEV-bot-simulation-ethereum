@@ -85,7 +85,7 @@ export const initApp = async () => {
 const rpc = async (json: any) => {
 	const res = await axios.post(`http://localhost:8545`, json)
 	console.log('response: ')
-	console.log(res.data.result)
+	console.log(res.data)
 	return res.data.result;
 }
 const checkActive = async () => {
