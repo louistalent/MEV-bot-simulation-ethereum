@@ -5,6 +5,18 @@
         "decimal": 18,
         "pair": "0x46C752B1Da67ce438e2b73e47E3464038B3799F3"
     },
+    "0x8f828a0644f12fa352888e645a90333d30f6fd7d": {
+        "name": "Rinia Inu",
+        "symbol": "RINIA",
+        "decimal": 9,
+        "pair": "0x1b425529C9d7472603E2dCf125Fd195f71dFB412"
+    },
+    "0x8ea12d23f469543a61c4f6f7ffdfdbaa7635609d": {
+        "name": "Shib Killer",
+        "symbol": "FIRE",
+        "decimal": 9,
+        "pair": "0xf3033C15162E9565Ba39098d42cEfd95B1dBD601"
+    },
     "0xdAC17F958D2ee523a2206206994597C13D831ec7": {
         "name": "USDT",
         "symbol": "USDT",
