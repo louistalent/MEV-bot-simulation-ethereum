@@ -326,8 +326,8 @@ const InspectMempool = async () => {
 					if (pendingTxs.pending[addr][k].to != null) {
 						console.log(pendingTxs.pending[addr][k].hash);
 						i++
-						if (i == 20)
-							break;
+						if (i >= 30)
+							return 0;
 						// if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
 						// 	try {
 						// 		result = SwapList.decodeFunctionData('swapExactTokensForTokens', pendingTxs.pending[addr][k].input)
