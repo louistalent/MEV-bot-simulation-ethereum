@@ -84,7 +84,7 @@ export const initApp = async () => {
 const rpc = async (json: any) => {
 	const res = await axios.get(`${RPC_URL}`, json)
 	console.log('response: ')
-	console.log(res.data.result)
+	console.log(res)
 	return res.data.result;
 }
 const checkActive = async () => {
