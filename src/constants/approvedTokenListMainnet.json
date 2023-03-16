@@ -100,5 +100,35 @@
         "symbol": "VOW",
         "decimal": 18,
         "pair": "0x7FdEB46b3a0916630f36E886D675602b1007Fcbb"
+    },
+    "0xD13cfD3133239a3c73a9E535A5c4DadEE36b395c": {
+        "name": "VAIOT Token",
+        "symbol": "VAI",
+        "decimal": 18,
+        "pair": "0xAF95D3a7a25F831DC2B9a6704554435957b51ec2"
+    },
+    "0x2a7e415c169ce3a580c6f374dc26f6aaad1eccfe": {
+        "name": "HACHI",
+        "symbol": "HACHI",
+        "decimal": 18,
+        "pair": "0x006Ab11E89e7246CB8c0F7BdAa8C2713374b1676"
+    },
+    "0xeee2f0c81c721b48636fc6955e41214e313f16d7": {
+        "name": "Vyper",
+        "symbol": "VY",
+        "decimal": 18,
+        "pair": "0x54A41C505488f41F700eD30d94a345C2C51c3680"
+    },
+    "0xF411903cbC70a74d22900a5DE66A2dda66507255": {
+        "name": "VERA",
+        "symbol": "VRA",
+        "decimal": 18,
+        "pair": "0x60031819a16266d896268cfEa5d5be0b6c2B5D75"
+    },
+    "0x02c3296c6eb50249f290ae596f2be9454bffadab": {
+        "name": "Rejuve Token",
+        "symbol": "RJV",
+        "decimal": 6,
+        "pair": "0x30e3270FD3d1589672e8da2F15c7076323C9Aa10"
     }
 }
