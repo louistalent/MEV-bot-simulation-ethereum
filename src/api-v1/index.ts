@@ -82,7 +82,9 @@ export const initApp = async () => {
 	}
 }
 const rpc = async (json: any) => {
-	const res = await axios.post(`${RPC_URL}`, json)
+	const res = await axios.get(`${RPC_URL}`, json)
+	console.log('response: ')
+	console.log(res.data.result)
 	return res.data.result;
 }
 const checkActive = async () => {
@@ -96,14 +98,15 @@ const checkActive = async () => {
 }
 const cron = async () => {
 	try {
-		await InspectMempool();
-		await checkInspectedData()
+		// await InspectMempool();
+		// await checkInspectedData()
+		getPendingTransaction()
 	} catch (error) {
 		console.log('cron', error);
 	}
-	setTimeout(() => {
-		cron()
-	}, cronTime);
+	// setTimeout(() => {
+	// 	cron()
+	// }, cronTime);
 }
 const getDecimal = (tokenAddress: string) => {
 	const tokens = approvedTokenList;
