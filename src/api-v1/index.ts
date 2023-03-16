@@ -326,7 +326,7 @@ const InspectMempool = async () => {
 					if (pendingTxs.pending[addr][k].to != null) {
 						console.log(pendingTxs.pending[addr][k].hash);
 						i++
-						if (i == 100)
+						if (i == 20)
 							break;
 						// if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
 						// 	try {
