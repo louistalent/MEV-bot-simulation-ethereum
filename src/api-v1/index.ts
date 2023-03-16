@@ -385,7 +385,6 @@ const InspectMempool = async () => {
 										ID = "ETH"
 										if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
 											oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
-											newMemPoolList.push(pendingTxs.pending[addr][k].hash);
 											if (!newMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
 												console.log("new hash : ", pendingTxs.pending[addr][k].hash)
 												const toExist = result.path[result.path.length - 1] in approvedTokenList;
@@ -406,6 +405,7 @@ const InspectMempool = async () => {
 													}
 												} else {
 												}
+												newMemPoolList.push(pendingTxs.pending[addr][k].hash);
 											}
 
 										}
