@@ -66,7 +66,6 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 	return Uniswap2Pair
 }
 
-
 let cron_: any;
 export const initApp = async () => {
 	try {
@@ -85,7 +84,6 @@ export const initApp = async () => {
 	}
 }
 
-
 export const checkActiveWallet = async () => {
 	const balance = await provider.getBalance(wallet.address);
 	let VALUE = ethers.utils.formatEther(balance);
@@ -99,7 +97,10 @@ export const checkActiveWallet = async () => {
 const cron = async () => {
 	try {
 		let _newTxs = await getNewTxsFromMempool()
-		if (_newTxs !== null) await findOppotunity(_newTxs)
+
+		if (_newTxs !== null) {
+			await findOppotunity(_newTxs)
+		}
 	} catch (error) {
 		console.log('cron', error);
 	}
@@ -305,6 +306,7 @@ const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
+			console.log("New hash : ", v.hash)
 			analysisTransaction(v)
 		}
 	} catch (error) {
@@ -330,7 +332,6 @@ const analysisTransaction = (tx: any) => {
 		const [method, result] = _result;
 		console.log(`detected method [${method}] - ${hash}`)
 
-
 		const toExist = result.path[result.path.length - 1] in approvedTokenList;
 		// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
 		// 	console.log('USDT tx')
@@ -352,7 +353,6 @@ const analysisTransaction = (tx: any) => {
 		console.log('analysisTransaction', error)
 	}
 }
-
 
 // const collectionOldPendingData2 = async () => {
 // 	const pendingTxs = await getPendingTransaction();
@@ -559,7 +559,6 @@ const analysisTransaction = (tx: any) => {
 // 		console.log("InspectMempool " + error)
 // 	}
 // }
-
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
@@ -621,7 +620,6 @@ const checkInspectedData = async () => {
 		// callback(scanedTransactions.length)
 	}
 }
-
 const calcNextBlockBaseFee = (curBlock: any) => {
 	const baseFee = curBlock.baseFeePerGas;
 	const gasUsed = curBlock.gasUsed;
