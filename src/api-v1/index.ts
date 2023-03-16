@@ -73,17 +73,16 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 	return Uniswap2Pair
 }
 
-
+let cron_: any;
 export const initApp = async () => {
 	try {
 		console.log(`start scanning`);
 		let feeData = await provider.getFeeData();
 		console.log('feeData : ', feeData);
 		await collectionOldPendingData();
-		let cron_ = setTimeout(() => {
+		cron_ = setTimeout(() => {
 			cron()
 		}, 15000);
-		clearTimeout(cron_)
 	} catch (error) {
 	}
 }
@@ -106,6 +105,7 @@ const cron = async () => {
 		console.log('start cron')
 		await InspectMempool();
 		await checkInspectedData()
+		clearTimeout(cron_)
 	} catch (error) {
 		console.log('cron', error);
 	}
