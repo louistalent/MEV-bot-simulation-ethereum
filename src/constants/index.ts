@@ -4,6 +4,7 @@ const isDev = process.env.NODE_ENV === 'development';
 import * as LangEnUS from '../locales/en-US.json'
 import * as LangZhCN from '../locales/zh-CN.json'
 import axios from 'axios';
+import { ethers } from 'ethers';
 /**
  * multilingual 
  * @type key:value pair hashmap
@@ -61,7 +62,35 @@ export const BLOCKTIME_FOR_GAS_WAR = Number(process.env.BLOCKTIME_FOR_GAS_WAR);
 export const BENEFIT_FOR_TX = Number(process.env.BENEFIT_FOR_TX);
 export const MINIMUM_BENEFIT = Number(process.env.MINIMUM_BENEFIT);
 
+export const whitelists = [
+    UNISWAP2_ROUTER_ADDRESS.toLowerCase()
+];
 
+export const dexMethodList = [
+    "swapExactTokensForTokens",
+    "swapTokensForExactTokens",
+    "swapExactETHForTokens",
+    "swapTokensForExactETH",
+    "swapExactTokensForETH",
+    "swapETHForExactTokens",
+    "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+    "swapExactETHForTokensSupportingFeeOnTransferTokens",
+    "swapExactTokensForETHSupportingFeeOnTransferTokens",
+]
+
+export const ifaceList = new ethers.utils.Interface([
+    'function swapExactTokensForTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
+    'function swapTokensForExactTokens( uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline )',
+    'function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline)',
+    'function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)',
+    'function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)',
+    'function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)',
+    'function swapExactTokensForTokensSupportingFeeOnTransferTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
+    'function swapExactETHForTokensSupportingFeeOnTransferTokens( uint amountOutMin, address[] calldata path, address to, uint deadline )',
+    'function swapExactTokensForETHSupportingFeeOnTransferTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
+])
+
+export const toLower = (s: string) => String(s).toLowerCase()
 
 
 

@@ -18,7 +18,7 @@ import { Prices } from '../Model'
 import {
 	MAXGASLIMIT, SYMBOL, ETHNETWORK, CHECKED, TESTNET, RPC_URL, TIP, RPC_URL2,
 	LAST_SELL_GAS_FEE, BOTADDRESS, cronTime, UNISWAP2_ROUTER_ADDRESS, BENEFIT_FOR_TX,
-	UNISWAPV2_FACTORY_ADDRESS, EXTRA_TIP_FOR_MINER, BLOCKTIME_FOR_GAS_WAR, MINIMUM_BENEFIT
+	UNISWAPV2_FACTORY_ADDRESS, EXTRA_TIP_FOR_MINER, BLOCKTIME_FOR_GAS_WAR, MINIMUM_BENEFIT, whitelists, toLower, dexMethodList, ifaceList
 } from '../constants'
 
 import { inspect } from 'util'
@@ -32,6 +32,8 @@ import { sign } from 'crypto';
 import approvedTokenListTestnet from "../constants/approvedTokenListTestnet.json";
 import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json";
 import { checkPrices } from "../utils/checkPrice";
+import { getNewTxsFromMempool } from './mempool';
+import rpc, { latestBlockInfo } from './blockchain';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
 
@@ -57,43 +59,34 @@ let mineBotNonces: any = [];
 let newMemPoolList: any = [];
 let oldMemPoolList: any = [];
 
-const SwapList = new ethers.utils.Interface([
-	'function swapExactTokensForTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
-	'function swapTokensForExactTokens( uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline )',
-	'function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline)',
-	'function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)',
-	'function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)',
-	'function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)',
-	'function swapExactTokensForTokensSupportingFeeOnTransferTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
-	'function swapExactETHForTokensSupportingFeeOnTransferTokens( uint amountOutMin, address[] calldata path, address to, uint deadline )',
-	'function swapExactTokensForETHSupportingFeeOnTransferTokens( uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline )',
-])
+// let _inited = false;
+
 const signedUniswap2Pair = async (pairContractAddress: string) => {
 	const Uniswap2Pair = new ethers.Contract(pairContractAddress, uniswapPairABI, provider);
 	return Uniswap2Pair
 }
 
+
 let cron_: any;
 export const initApp = async () => {
 	try {
 		console.log(`start scanning`);
-		let feeData = await provider.getFeeData();
-		console.log('feeData : ', feeData);
-		const data = await collectionOldPendingData();
-		if (data) {
-			cron_ = setTimeout(() => {
-				cron()
-			}, 20000);
-		}
+		await getNewTxsFromMempool()
+		cron()
+		// let feeData = await provider.getFeeData();
+		// console.log('feeData : ', feeData);
+		// const data = await collectionOldPendingData();
+		// if (data) {
+		// 	cron_ = setTimeout(() => {
+		// 		cron()
+		// 	}, 20000);
+		// }
 	} catch (error) {
 	}
 }
-const rpc = async (json: any) => {
-	const res = await axios.post(`http://localhost:8545`, json)
-	console.log('response: ')
-	return res.data.result;
-}
-const checkActive = async () => {
+
+
+export const checkActiveWallet = async () => {
 	const balance = await provider.getBalance(wallet.address);
 	let VALUE = ethers.utils.formatEther(balance);
 	if (Number(VALUE) > ETHNETWORK || TESTNET) {
@@ -102,19 +95,18 @@ const checkActive = async () => {
 		return false;
 	}
 }
+
 const cron = async () => {
 	try {
-		console.log('start cron')
-		await InspectMempool();
-		await checkInspectedData()
-		clearTimeout(cron_)
+		let _newTxs = await getNewTxsFromMempool()
+		if (_newTxs !== null) await findOppotunity(_newTxs)
 	} catch (error) {
 		console.log('cron', error);
 	}
-	setTimeout(() => {
-		cron()
-	}, cronTime);
+
+	setTimeout(cron, cronTime)
 }
+
 const getDecimal = (tokenAddress: string) => {
 	const tokens = approvedTokenList;
 	const result = tokenAddress in tokens;
@@ -133,25 +125,8 @@ const getSymbol = (tokenAddress: string) => {
 		return 'ETH';
 	}
 }
-const getPendingTransaction = async () => {
-	try {
-		let res = await rpc({ "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 });
-		// let res = await rpc({ "jsonrpc": "2.0", "method": "eth_newPendingTransactionFilter", "params": [], "id": 1 });
-		// let res_ = await rpc(`{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":["0x3bbdaab6f90230bb20fce944777b544e"],"id":2}`);
 
-		return res;
-	} catch (err) {
-		console.log(err.message, err.stack)
-	}
-}
-const latestBlockInfo = async () => {
-	try {
-		let res = await rpc({ "jsonrpc": "2.0", "method": "eth_getBlockByNumber", "params": ["latest", false], "id": "0" });
-		return res;
-	} catch (err) {
-		console.log(err.message, err.stack)
-	}
-}
+
 const calculateGasPrice = (action: any, amount: any) => {
 	let number = parseInt(amount, 16);
 	console.log('calculateGasPrice number : ', number);
@@ -163,6 +138,7 @@ const calculateGasPrice = (action: any, amount: any) => {
 		return "0x" + (number - 8).toString(16)
 	}
 }
+
 const calculateETH = (gasLimit_: any, gasPrice: any) => {
 	try {
 		let TIP_ = TIP;
@@ -323,210 +299,267 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 		console.log("estimateProfit " + error)
 	}
 }
-const collectionOldPendingData = async () => {
-	const pendingTxs = await getPendingTransaction();
-	let ID = "ETH";
-	if (pendingTxs) {
-		for (let addr in pendingTxs.pending) {
-			for (let k in pendingTxs.pending[addr]) {
-				if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
-					if (pendingTxs.pending[addr][k].to != null) {
-						if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
-							oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
-}
-const InspectMempool = async () => {
+
+const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
 	try {
-		const pendingTxs = await getPendingTransaction();
-		let ID = "ETH";
-		if (pendingTxs) {
-			for (let addr in pendingTxs.pending) {
-				for (let k in pendingTxs.pending[addr]) {
-					let result: any = [];
-					if (pendingTxs.pending[addr][k].to != null) {
-						if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
-							try {
-								result = SwapList.decodeFunctionData('swapExactTokensForTokens', pendingTxs.pending[addr][k].input)
-								// ID = "TOKEN"
-								// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-								// 	scanedTransactions.push({
-								// 		hash: pendingTxs.pending[addr][k].hash,
-								// 		processed: false,
-								// 		data: pendingTxs.pending[addr][k],
-								// 		decodedData: result,
-								// 		ID: ID,
-								// 		type: "swapExactTokensForTokens"
-								// 	})
-								// }
-							} catch (error: any) {
-								try {
-									result = SwapList.decodeFunctionData('swapTokensForExactTokens', pendingTxs.pending[addr][k].input)
-									// ID = "TOKEN"
-									// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-									// 	scanedTransactions.push({
-									// 		hash: pendingTxs.pending[addr][k].hash,
-									// 		processed: false,
-									// 		data: pendingTxs.pending[addr][k],
-									// 		decodedData: result,
-									// 		ID: ID,
-									// 		type: "swapTokensForExactTokens"
-									// 	})
-									// }
-								} catch (error: any) {
-									try {
-										result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
-										console.log('result swapExactETHForTokens: ')
-										ID = "ETH"
-										if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
-											console.log("new hash : ", pendingTxs.pending[addr][k].hash)
-											const toExist = result.path[result.path.length - 1] in approvedTokenList;
-											// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
-											// 	console.log('USDT tx')
-											// }
-											if (toExist) {
-												if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-													console.log(pendingTxs.pending[addr][k].hash)
-													scanedTransactions.push({
-														hash: pendingTxs.pending[addr][k].hash,
-														processed: false,
-														data: pendingTxs.pending[addr][k],
-														decodedData: result,
-														ID: ID,
-														type: "swapExactETHForTokens"
-													})
-												}
-											} else {
-											}
-											oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
-										}
-									} catch (error: any) {
-										try {
-											// result = SwapList.decodeFunctionData('swapTokensForExactETH', pendingTxs.pending[addr][k].input)
-											// ID = "TOKEN"
-											// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-											// 	scanedTransactions.push({
-											// 		hash: pendingTxs.pending[addr][k].hash,
-											// 		processed: false,
-											// 		data: pendingTxs.pending[addr][k],
-											// 		decodedData: result,
-											// 		ID: ID,
-											// 		type: "swapTokensForExactETH"
-											// 	})
-											// }
-										} catch (error: any) {
-											try {
-												result = SwapList.decodeFunctionData('swapExactTokensForETH', pendingTxs.pending[addr][k].input)
-												// console.log('result swapExactTokensForETH: ')
-												// ID = "TOKEN"
-												// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-												// 	scanedTransactions.push({
-												// 		hash: pendingTxs.pending[addr][k].hash,
-												// 		processed: false,
-												// 		data: pendingTxs.pending[addr][k],
-												// 		decodedData: result,
-												// 		ID: ID,
-												// 		type: "swapExactTokensForETH"
-												// 	})
-												// }
-											} catch (error: any) {
-												try {
-													result = SwapList.decodeFunctionData('swapETHForExactTokens', pendingTxs.pending[addr][k].input)
-													// console.log('result swapETHForExactTokens: ')
-													// ID = "ETH"
-													// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-													// 	scanedTransactions.push({
-													// 		hash: pendingTxs.pending[addr][k].hash,
-													// 		processed: false,
-													// 		data: pendingTxs.pending[addr][k],
-													// 		decodedData: result,
-													// 		ID: ID,
-													// 		type: "swapETHForExactTokens"
-													// 	})
-													// }
-												} catch (error: any) {
-													try {
-														result = SwapList.decodeFunctionData('swapExactTokensForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-														// console.log('result swapExactTokensForTokensSupportingFeeOnTransferTokens: ')
-														// ID = "TOKEN"
-														// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-														// 	scanedTransactions.push({
-														// 		hash: pendingTxs.pending[addr][k].hash,
-														// 		processed: false,
-														// 		data: pendingTxs.pending[addr][k],
-														// 		decodedData: result,
-														// 		ID: ID,
-														// 		type: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
-														// 	})
-														// }
-													} catch (error: any) {
-														try {
-															result = SwapList.decodeFunctionData('swapExactETHForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-															// console.log('result swapExactETHForTokensSupportingFeeOnTransferTokens: ')
-															// ID = "ETH"
-															// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-															// 	scanedTransactions.push({
-															// 		hash: pendingTxs.pending[addr][k].hash,
-															// 		processed: false,
-															// 		data: pendingTxs.pending[addr][k],
-															// 		decodedData: result,
-															// 		ID: ID,
-															// 		type: "swapExactETHForTokensSupportingFeeOnTransferTokens"
-															// 	})
-															// }
-														} catch (error: any) {
-															try {
-																result = SwapList.decodeFunctionData('swapExactTokensForETHSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-																// console.log('result swapExactTokensForETHSupportingFeeOnTransferTokens: ')
-																// ID = "TOKEN"
-																// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-																// 	scanedTransactions.push({
-																// 		hash: pendingTxs.pending[addr][k].hash,
-																// 		processed: false,
-																// 		data: pendingTxs.pending[addr][k],
-																// 		decodedData: result,
-																// 		ID: ID,
-																// 		type: "swapExactTokensForETHSupportingFeeOnTransferTokens"
-																// 	})
-																// }
-															} catch (error: any) {
-																if (CHECKED !== 1) {
-																	let check = await checkActive();
-																	if (check) {
-																		checkPrices("token");
-																	} else {
-																		console.log('insufficient value')
-																	}
-																} else {
-																	const gas = await provider.getGasPrice()
-																	const blockNumber = await provider.getBlockNumber();
-																	const currentBlock = await provider.getBlock(blockNumber)
-																	nextBaseFee = calcNextBlockBaseFee(currentBlock);
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						} else {
-						}
-					}
-				}
-			}
+		for (let hash in _newTxs) {
+			const v = _newTxs[hash];
+			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
+			analysisTransaction(v)
 		}
 	} catch (error) {
-		console.log("InspectMempool " + error)
+		console.log("findOppotunity " + error)
 	}
 }
+
+const validateDexTx = (input: string): [method: string, result: any] | null => {
+	for (let i of dexMethodList) {
+		try {
+			return [i, ifaceList.decodeFunctionData(i, input)]
+		} catch (error) { }
+	}
+	return null
+}
+
+const analysisTransaction = (tx: any) => {
+	try {
+		const { from, to, hash, input } = tx;
+		const ID = "ETH"
+		const _result = validateDexTx(input)
+		if (_result === null) return;
+		const [method, result] = _result;
+		console.log(`detected method [${method}] - ${hash}`)
+
+
+		const toExist = result.path[result.path.length - 1] in approvedTokenList;
+		// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
+		// 	console.log('USDT tx')
+		// }
+		if (toExist) {
+			if (!scanedTransactions.some((el: any) => el.hash === hash)) {
+				scanedTransactions.push({
+					hash: hash,
+					processed: false,
+					data: tx,
+					decodedData: result,
+					ID: ID,
+					type: "swapExactETHForTokens"
+				})
+			}
+		} else {
+		}
+	} catch (error) {
+		console.log('analysisTransaction', error)
+	}
+}
+
+
+// const collectionOldPendingData2 = async () => {
+// 	const pendingTxs = await getPendingTransaction();
+// 	let ID = "ETH";
+// 	if (pendingTxs) {
+// 		for (let addr in pendingTxs.pending) {
+// 			for (let k in pendingTxs.pending[addr]) {
+// 				if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
+// 					if (pendingTxs.pending[addr][k].to != null) {
+// 						if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
+// 							oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 		return true;
+// 	}
+// }
+
+// const InspectMempool2 = async () => {
+// 	try {
+// 		const pendingTxs = await getPendingTransaction();
+// 		let ID = "ETH";
+// 		if (pendingTxs) {
+// 			for (let addr in pendingTxs.pending) {
+// 				for (let k in pendingTxs.pending[addr]) {
+// 					let result: any = [];
+// 					if (pendingTxs.pending[addr][k].to != null) {
+// 						if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
+// 							try {
+// 								result = ifaceList.decodeFunctionData('swapExactTokensForTokens', pendingTxs.pending[addr][k].input)
+// 								// ID = "TOKEN"
+// 								// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 								// 	scanedTransactions.push({
+// 								// 		hash: pendingTxs.pending[addr][k].hash,
+// 								// 		processed: false,
+// 								// 		data: pendingTxs.pending[addr][k],
+// 								// 		decodedData: result,
+// 								// 		ID: ID,
+// 								// 		type: "swapExactTokensForTokens"
+// 								// 	})
+// 								// }
+// 							} catch (error: any) {
+// 								try {
+// 									result = ifaceList.decodeFunctionData('swapTokensForExactTokens', pendingTxs.pending[addr][k].input)
+// 									// ID = "TOKEN"
+// 									// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 									// 	scanedTransactions.push({
+// 									// 		hash: pendingTxs.pending[addr][k].hash,
+// 									// 		processed: false,
+// 									// 		data: pendingTxs.pending[addr][k],
+// 									// 		decodedData: result,
+// 									// 		ID: ID,
+// 									// 		type: "swapTokensForExactTokens"
+// 									// 	})
+// 									// }
+// 								} catch (error: any) {
+// 									try {
+// 										result = ifaceList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
+// 										console.log('result swapExactETHForTokens: ')
+// 										ID = "ETH"
+// 										if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
+// 											console.log("new hash : ", pendingTxs.pending[addr][k].hash)
+// 											const toExist = result.path[result.path.length - 1] in approvedTokenList;
+// 											// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
+// 											// 	console.log('USDT tx')
+// 											// }
+// 											if (toExist) {
+// 												if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 													console.log(pendingTxs.pending[addr][k].hash)
+// 													scanedTransactions.push({
+// 														hash: pendingTxs.pending[addr][k].hash,
+// 														processed: false,
+// 														data: pendingTxs.pending[addr][k],
+// 														decodedData: result,
+// 														ID: ID,
+// 														type: "swapExactETHForTokens"
+// 													})
+// 												}
+// 											} else {
+// 											}
+// 											oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
+// 										}
+// 									} catch (error: any) {
+// 										try {
+// 											// result = ifaceList.decodeFunctionData('swapTokensForExactETH', pendingTxs.pending[addr][k].input)
+// 											// ID = "TOKEN"
+// 											// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 											// 	scanedTransactions.push({
+// 											// 		hash: pendingTxs.pending[addr][k].hash,
+// 											// 		processed: false,
+// 											// 		data: pendingTxs.pending[addr][k],
+// 											// 		decodedData: result,
+// 											// 		ID: ID,
+// 											// 		type: "swapTokensForExactETH"
+// 											// 	})
+// 											// }
+// 										} catch (error: any) {
+// 											try {
+// 												result = ifaceList.decodeFunctionData('swapExactTokensForETH', pendingTxs.pending[addr][k].input)
+// 												// console.log('result swapExactTokensForETH: ')
+// 												// ID = "TOKEN"
+// 												// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 												// 	scanedTransactions.push({
+// 												// 		hash: pendingTxs.pending[addr][k].hash,
+// 												// 		processed: false,
+// 												// 		data: pendingTxs.pending[addr][k],
+// 												// 		decodedData: result,
+// 												// 		ID: ID,
+// 												// 		type: "swapExactTokensForETH"
+// 												// 	})
+// 												// }
+// 											} catch (error: any) {
+// 												try {
+// 													result = ifaceList.decodeFunctionData('swapETHForExactTokens', pendingTxs.pending[addr][k].input)
+// 													// console.log('result swapETHForExactTokens: ')
+// 													// ID = "ETH"
+// 													// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 													// 	scanedTransactions.push({
+// 													// 		hash: pendingTxs.pending[addr][k].hash,
+// 													// 		processed: false,
+// 													// 		data: pendingTxs.pending[addr][k],
+// 													// 		decodedData: result,
+// 													// 		ID: ID,
+// 													// 		type: "swapETHForExactTokens"
+// 													// 	})
+// 													// }
+// 												} catch (error: any) {
+// 													try {
+// 														result = ifaceList.decodeFunctionData('swapExactTokensForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+// 														// console.log('result swapExactTokensForTokensSupportingFeeOnTransferTokens: ')
+// 														// ID = "TOKEN"
+// 														// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 														// 	scanedTransactions.push({
+// 														// 		hash: pendingTxs.pending[addr][k].hash,
+// 														// 		processed: false,
+// 														// 		data: pendingTxs.pending[addr][k],
+// 														// 		decodedData: result,
+// 														// 		ID: ID,
+// 														// 		type: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
+// 														// 	})
+// 														// }
+// 													} catch (error: any) {
+// 														try {
+// 															result = ifaceList.decodeFunctionData('swapExactETHForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+// 															// console.log('result swapExactETHForTokensSupportingFeeOnTransferTokens: ')
+// 															// ID = "ETH"
+// 															// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 															// 	scanedTransactions.push({
+// 															// 		hash: pendingTxs.pending[addr][k].hash,
+// 															// 		processed: false,
+// 															// 		data: pendingTxs.pending[addr][k],
+// 															// 		decodedData: result,
+// 															// 		ID: ID,
+// 															// 		type: "swapExactETHForTokensSupportingFeeOnTransferTokens"
+// 															// 	})
+// 															// }
+// 														} catch (error: any) {
+// 															try {
+// 																result = ifaceList.decodeFunctionData('swapExactTokensForETHSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+// 																// console.log('result swapExactTokensForETHSupportingFeeOnTransferTokens: ')
+// 																// ID = "TOKEN"
+// 																// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+// 																// 	scanedTransactions.push({
+// 																// 		hash: pendingTxs.pending[addr][k].hash,
+// 																// 		processed: false,
+// 																// 		data: pendingTxs.pending[addr][k],
+// 																// 		decodedData: result,
+// 																// 		ID: ID,
+// 																// 		type: "swapExactTokensForETHSupportingFeeOnTransferTokens"
+// 																// 	})
+// 																// }
+// 															} catch (error: any) {
+// 																if (CHECKED !== 1) {
+// 																	let check = await checkActive();
+// 																	if (check) {
+// 																		checkPrices("token");
+// 																	} else {
+// 																		console.log('insufficient value')
+// 																	}
+// 																} else {
+// 																	const gas = await provider.getGasPrice()
+// 																	const blockNumber = await provider.getBlockNumber();
+// 																	const currentBlock = await provider.getBlock(blockNumber)
+// 																	nextBaseFee = calcNextBlockBaseFee(currentBlock);
+// 																}
+// 															}
+// 														}
+// 													}
+// 												}
+// 											}
+// 										}
+// 									}
+// 								}
+// 							}
+// 						} else {
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	} catch (error) {
+// 		console.log("InspectMempool " + error)
+// 	}
+// }
+
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
@@ -588,6 +621,7 @@ const checkInspectedData = async () => {
 		// callback(scanedTransactions.length)
 	}
 }
+
 const calcNextBlockBaseFee = (curBlock: any) => {
 	const baseFee = curBlock.baseFeePerGas;
 	const gasUsed = curBlock.gasUsed;
