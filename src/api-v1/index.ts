@@ -351,19 +351,18 @@ const InspectMempool = async () => {
 										result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
 										console.log('result swapExactETHForTokens: ')
 										ID = "ETH"
-										let amountOutMin = web3.utils.fromWei(result.amountOutMin.toString())
-										console.log("amountOutMin : ", amountOutMin)
-										console.log(pendingTxs.pending[addr][k].hash)
-										console.log('TOKEN address', result.path[result.path.length - 1])
-										if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-											scanedTransactions.push({
-												hash: pendingTxs.pending[addr][k].hash,
-												processed: false,
-												data: pendingTxs.pending[addr][k],
-												decodedData: result,
-												ID: ID,
-												type: "swapExactETHForTokens"
-											})
+										const toExist = result.path[scanedTransactions.decodedData.path.length - 1] in approvedTokenList;
+										if (toExist) {
+											if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+												scanedTransactions.push({
+													hash: pendingTxs.pending[addr][k].hash,
+													processed: false,
+													data: pendingTxs.pending[addr][k],
+													decodedData: result,
+													ID: ID,
+													type: "swapExactETHForTokens"
+												})
+											}
 										}
 									} catch (error: any) {
 										try {
