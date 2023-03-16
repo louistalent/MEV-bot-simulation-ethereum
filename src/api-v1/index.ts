@@ -384,30 +384,26 @@ const InspectMempool = async () => {
 										console.log('result swapExactETHForTokens: ')
 										ID = "ETH"
 										if (!oldMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
-											oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
-											if (!newMemPoolList.includes(pendingTxs.pending[addr][k].hash)) {
-												console.log("new hash : ", pendingTxs.pending[addr][k].hash)
-												const toExist = result.path[result.path.length - 1] in approvedTokenList;
-												// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
-												// 	console.log('USDT tx')
-												// }
-												if (toExist) {
-													if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-														console.log(pendingTxs.pending[addr][k].hash)
-														scanedTransactions.push({
-															hash: pendingTxs.pending[addr][k].hash,
-															processed: false,
-															data: pendingTxs.pending[addr][k],
-															decodedData: result,
-															ID: ID,
-															type: "swapExactETHForTokens"
-														})
-													}
-												} else {
+											console.log("new hash : ", pendingTxs.pending[addr][k].hash)
+											const toExist = result.path[result.path.length - 1] in approvedTokenList;
+											// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
+											// 	console.log('USDT tx')
+											// }
+											if (toExist) {
+												if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+													console.log(pendingTxs.pending[addr][k].hash)
+													scanedTransactions.push({
+														hash: pendingTxs.pending[addr][k].hash,
+														processed: false,
+														data: pendingTxs.pending[addr][k],
+														decodedData: result,
+														ID: ID,
+														type: "swapExactETHForTokens"
+													})
 												}
-												newMemPoolList.push(pendingTxs.pending[addr][k].hash);
+											} else {
 											}
-
+											oldMemPoolList.push(pendingTxs.pending[addr][k].hash);
 										}
 									} catch (error: any) {
 										try {
