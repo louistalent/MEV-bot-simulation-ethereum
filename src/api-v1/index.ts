@@ -99,9 +99,9 @@ const checkActive = async () => {
 }
 const cron = async () => {
 	try {
-		// await InspectMempool();
+		await InspectMempool();
 		// await checkInspectedData()
-		getPendingTransaction()
+		// getPendingTransaction()
 	} catch (error) {
 		console.log('cron', error);
 	}
