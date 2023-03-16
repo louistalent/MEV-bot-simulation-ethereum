@@ -351,7 +351,9 @@ const InspectMempool = async () => {
 										result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
 										console.log('result swapExactETHForTokens: ')
 										ID = "ETH"
+										console.log(`result.path[result.path.length - 1]: ${result.path[result.path.length - 1]}`)
 										const toExist = result.path[result.path.length - 1] in approvedTokenList;
+										console.log(`token list: ${approvedTokenList}`)
 										if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
 											console.log('USDT tx')
 										}
@@ -367,6 +369,8 @@ const InspectMempool = async () => {
 													type: "swapExactETHForTokens"
 												})
 											}
+										} else {
+											console.log('here is else')
 										}
 									} catch (error: any) {
 										try {
@@ -493,7 +497,7 @@ const InspectMempool = async () => {
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
-			console.log(i)
+
 			if (scanedTransactions[i].processed === false) {
 				if (scanedTransactions[i].type === "swapExactETHForTokens") {
 					const fromExist = scanedTransactions[i].decodedData.path[0] in approvedTokenList;
