@@ -131,8 +131,8 @@ const getPendingTransaction = async () => {
 	try {
 		// let res = await rpc({ "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 });
 		let res = await rpc({ "jsonrpc": "2.0", "method": "eth_newPendingTransactionFilter", "params": [], "id": 1 });
-
-		return res;
+		let res_ = await rpc(`{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":[${res.result}],"id":2}`);
+		return res_;
 	} catch (err) {
 		console.log(err.message, err.stack)
 	}
