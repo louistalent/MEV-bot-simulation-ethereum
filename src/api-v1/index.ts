@@ -83,9 +83,9 @@ export const initApp = async () => {
 	}
 }
 const rpc = async (json: any) => {
-	const res = await axios.post(`http://localhost:8545`, { "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 })
+	const res = await axios.post(`http://localhost:8545`, json)
 	console.log('response: ')
-	console.log(res.data.result.pending)
+	// console.log(res.data.result.pending)
 	return res.data.result;
 }
 const checkActive = async () => {
@@ -319,179 +319,184 @@ const InspectMempool = async () => {
 		const pendingTxs = await getPendingTransaction();
 		let ID = "ETH";
 		if (pendingTxs) {
+			let i = 0
 			for (let addr in pendingTxs.pending) {
 				for (let k in pendingTxs.pending[addr]) {
 					let result: any = [];
 					if (pendingTxs.pending[addr][k].to != null) {
-						if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
-							try {
-								result = SwapList.decodeFunctionData('swapExactTokensForTokens', pendingTxs.pending[addr][k].input)
-								// ID = "TOKEN"
-								// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-								// 	scanedTransactions.push({
-								// 		hash: pendingTxs.pending[addr][k].hash,
-								// 		processed: false,
-								// 		data: pendingTxs.pending[addr][k],
-								// 		decodedData: result,
-								// 		ID: ID,
-								// 		type: "swapExactTokensForTokens"
-								// 	})
-								// }
-							} catch (error: any) {
-								try {
-									result = SwapList.decodeFunctionData('swapTokensForExactTokens', pendingTxs.pending[addr][k].input)
-									// ID = "TOKEN"
-									// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-									// 	scanedTransactions.push({
-									// 		hash: pendingTxs.pending[addr][k].hash,
-									// 		processed: false,
-									// 		data: pendingTxs.pending[addr][k],
-									// 		decodedData: result,
-									// 		ID: ID,
-									// 		type: "swapTokensForExactTokens"
-									// 	})
-									// }
-								} catch (error: any) {
-									try {
-										result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
-										console.log('result swapExactETHForTokens: ')
-										ID = "ETH"
-										if (!mempoollist.includes(pendingTxs.pending[addr][k].hash)) {
-											console.log(pendingTxs.pending[addr][k].hash)
-											mempoollist.push(pendingTxs.pending[addr][k].hash);
-										}
-										// const toExist = result.path[result.path.length - 1] in approvedTokenList;
-										// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
-										// 	console.log('USDT tx')
-										// }
-										// if (toExist) {
-										// 	if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-										// 		console.log(pendingTxs.pending[addr][k].hash)
-										// 		scanedTransactions.push({
-										// 			hash: pendingTxs.pending[addr][k].hash,
-										// 			processed: false,
-										// 			data: pendingTxs.pending[addr][k],
-										// 			decodedData: result,
-										// 			ID: ID,
-										// 			type: "swapExactETHForTokens"
-										// 		})
-										// 	}
-										// } else {
-										// }
-									} catch (error: any) {
-										try {
-											// result = SwapList.decodeFunctionData('swapTokensForExactETH', pendingTxs.pending[addr][k].input)
-											// ID = "TOKEN"
-											// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-											// 	scanedTransactions.push({
-											// 		hash: pendingTxs.pending[addr][k].hash,
-											// 		processed: false,
-											// 		data: pendingTxs.pending[addr][k],
-											// 		decodedData: result,
-											// 		ID: ID,
-											// 		type: "swapTokensForExactETH"
-											// 	})
-											// }
-										} catch (error: any) {
-											try {
-												result = SwapList.decodeFunctionData('swapExactTokensForETH', pendingTxs.pending[addr][k].input)
-												// console.log('result swapExactTokensForETH: ')
-												// ID = "TOKEN"
-												// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-												// 	scanedTransactions.push({
-												// 		hash: pendingTxs.pending[addr][k].hash,
-												// 		processed: false,
-												// 		data: pendingTxs.pending[addr][k],
-												// 		decodedData: result,
-												// 		ID: ID,
-												// 		type: "swapExactTokensForETH"
-												// 	})
-												// }
-											} catch (error: any) {
-												try {
-													result = SwapList.decodeFunctionData('swapETHForExactTokens', pendingTxs.pending[addr][k].input)
-													// console.log('result swapETHForExactTokens: ')
-													// ID = "ETH"
-													// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-													// 	scanedTransactions.push({
-													// 		hash: pendingTxs.pending[addr][k].hash,
-													// 		processed: false,
-													// 		data: pendingTxs.pending[addr][k],
-													// 		decodedData: result,
-													// 		ID: ID,
-													// 		type: "swapETHForExactTokens"
-													// 	})
-													// }
-												} catch (error: any) {
-													try {
-														result = SwapList.decodeFunctionData('swapExactTokensForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-														// console.log('result swapExactTokensForTokensSupportingFeeOnTransferTokens: ')
-														// ID = "TOKEN"
-														// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-														// 	scanedTransactions.push({
-														// 		hash: pendingTxs.pending[addr][k].hash,
-														// 		processed: false,
-														// 		data: pendingTxs.pending[addr][k],
-														// 		decodedData: result,
-														// 		ID: ID,
-														// 		type: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
-														// 	})
-														// }
-													} catch (error: any) {
-														try {
-															result = SwapList.decodeFunctionData('swapExactETHForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-															// console.log('result swapExactETHForTokensSupportingFeeOnTransferTokens: ')
-															// ID = "ETH"
-															// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-															// 	scanedTransactions.push({
-															// 		hash: pendingTxs.pending[addr][k].hash,
-															// 		processed: false,
-															// 		data: pendingTxs.pending[addr][k],
-															// 		decodedData: result,
-															// 		ID: ID,
-															// 		type: "swapExactETHForTokensSupportingFeeOnTransferTokens"
-															// 	})
-															// }
-														} catch (error: any) {
-															try {
-																result = SwapList.decodeFunctionData('swapExactTokensForETHSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
-																// console.log('result swapExactTokensForETHSupportingFeeOnTransferTokens: ')
-																// ID = "TOKEN"
-																// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
-																// 	scanedTransactions.push({
-																// 		hash: pendingTxs.pending[addr][k].hash,
-																// 		processed: false,
-																// 		data: pendingTxs.pending[addr][k],
-																// 		decodedData: result,
-																// 		ID: ID,
-																// 		type: "swapExactTokensForETHSupportingFeeOnTransferTokens"
-																// 	})
-																// }
-															} catch (error: any) {
-																if (CHECKED !== 1) {
-																	let check = await checkActive();
-																	if (check) {
-																		checkPrices("token");
-																	} else {
-																		console.log('insufficient value')
-																	}
-																} else {
-																	const gas = await provider.getGasPrice()
-																	const blockNumber = await provider.getBlockNumber();
-																	const currentBlock = await provider.getBlock(blockNumber)
-																	nextBaseFee = calcNextBlockBaseFee(currentBlock);
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						} else {
-						}
+						console.log(pendingTxs.pending[addr][k].hash);
+						i++
+						if (i == 100)
+							break;
+						// if (pendingTxs.pending[addr][k].to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
+						// 	try {
+						// 		result = SwapList.decodeFunctionData('swapExactTokensForTokens', pendingTxs.pending[addr][k].input)
+						// 		// ID = "TOKEN"
+						// 		// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 		// 	scanedTransactions.push({
+						// 		// 		hash: pendingTxs.pending[addr][k].hash,
+						// 		// 		processed: false,
+						// 		// 		data: pendingTxs.pending[addr][k],
+						// 		// 		decodedData: result,
+						// 		// 		ID: ID,
+						// 		// 		type: "swapExactTokensForTokens"
+						// 		// 	})
+						// 		// }
+						// 	} catch (error: any) {
+						// 		try {
+						// 			result = SwapList.decodeFunctionData('swapTokensForExactTokens', pendingTxs.pending[addr][k].input)
+						// 			// ID = "TOKEN"
+						// 			// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 			// 	scanedTransactions.push({
+						// 			// 		hash: pendingTxs.pending[addr][k].hash,
+						// 			// 		processed: false,
+						// 			// 		data: pendingTxs.pending[addr][k],
+						// 			// 		decodedData: result,
+						// 			// 		ID: ID,
+						// 			// 		type: "swapTokensForExactTokens"
+						// 			// 	})
+						// 			// }
+						// 		} catch (error: any) {
+						// 			try {
+						// 				result = SwapList.decodeFunctionData('swapExactETHForTokens', pendingTxs.pending[addr][k].input)
+						// 				console.log('result swapExactETHForTokens: ')
+						// 				ID = "ETH"
+						// 				if (!mempoollist.includes(pendingTxs.pending[addr][k].hash)) {
+						// 					console.log(pendingTxs.pending[addr][k].hash)
+						// 					mempoollist.push(pendingTxs.pending[addr][k].hash);
+						// 				}
+						// 				// const toExist = result.path[result.path.length - 1] in approvedTokenList;
+						// 				// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
+						// 				// 	console.log('USDT tx')
+						// 				// }
+						// 				// if (toExist) {
+						// 				// 	if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 				// 		console.log(pendingTxs.pending[addr][k].hash)
+						// 				// 		scanedTransactions.push({
+						// 				// 			hash: pendingTxs.pending[addr][k].hash,
+						// 				// 			processed: false,
+						// 				// 			data: pendingTxs.pending[addr][k],
+						// 				// 			decodedData: result,
+						// 				// 			ID: ID,
+						// 				// 			type: "swapExactETHForTokens"
+						// 				// 		})
+						// 				// 	}
+						// 				// } else {
+						// 				// }
+						// 			} catch (error: any) {
+						// 				try {
+						// 					// result = SwapList.decodeFunctionData('swapTokensForExactETH', pendingTxs.pending[addr][k].input)
+						// 					// ID = "TOKEN"
+						// 					// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 					// 	scanedTransactions.push({
+						// 					// 		hash: pendingTxs.pending[addr][k].hash,
+						// 					// 		processed: false,
+						// 					// 		data: pendingTxs.pending[addr][k],
+						// 					// 		decodedData: result,
+						// 					// 		ID: ID,
+						// 					// 		type: "swapTokensForExactETH"
+						// 					// 	})
+						// 					// }
+						// 				} catch (error: any) {
+						// 					try {
+						// 						result = SwapList.decodeFunctionData('swapExactTokensForETH', pendingTxs.pending[addr][k].input)
+						// 						// console.log('result swapExactTokensForETH: ')
+						// 						// ID = "TOKEN"
+						// 						// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 						// 	scanedTransactions.push({
+						// 						// 		hash: pendingTxs.pending[addr][k].hash,
+						// 						// 		processed: false,
+						// 						// 		data: pendingTxs.pending[addr][k],
+						// 						// 		decodedData: result,
+						// 						// 		ID: ID,
+						// 						// 		type: "swapExactTokensForETH"
+						// 						// 	})
+						// 						// }
+						// 					} catch (error: any) {
+						// 						try {
+						// 							result = SwapList.decodeFunctionData('swapETHForExactTokens', pendingTxs.pending[addr][k].input)
+						// 							// console.log('result swapETHForExactTokens: ')
+						// 							// ID = "ETH"
+						// 							// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 							// 	scanedTransactions.push({
+						// 							// 		hash: pendingTxs.pending[addr][k].hash,
+						// 							// 		processed: false,
+						// 							// 		data: pendingTxs.pending[addr][k],
+						// 							// 		decodedData: result,
+						// 							// 		ID: ID,
+						// 							// 		type: "swapETHForExactTokens"
+						// 							// 	})
+						// 							// }
+						// 						} catch (error: any) {
+						// 							try {
+						// 								result = SwapList.decodeFunctionData('swapExactTokensForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+						// 								// console.log('result swapExactTokensForTokensSupportingFeeOnTransferTokens: ')
+						// 								// ID = "TOKEN"
+						// 								// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 								// 	scanedTransactions.push({
+						// 								// 		hash: pendingTxs.pending[addr][k].hash,
+						// 								// 		processed: false,
+						// 								// 		data: pendingTxs.pending[addr][k],
+						// 								// 		decodedData: result,
+						// 								// 		ID: ID,
+						// 								// 		type: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
+						// 								// 	})
+						// 								// }
+						// 							} catch (error: any) {
+						// 								try {
+						// 									result = SwapList.decodeFunctionData('swapExactETHForTokensSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+						// 									// console.log('result swapExactETHForTokensSupportingFeeOnTransferTokens: ')
+						// 									// ID = "ETH"
+						// 									// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 									// 	scanedTransactions.push({
+						// 									// 		hash: pendingTxs.pending[addr][k].hash,
+						// 									// 		processed: false,
+						// 									// 		data: pendingTxs.pending[addr][k],
+						// 									// 		decodedData: result,
+						// 									// 		ID: ID,
+						// 									// 		type: "swapExactETHForTokensSupportingFeeOnTransferTokens"
+						// 									// 	})
+						// 									// }
+						// 								} catch (error: any) {
+						// 									try {
+						// 										result = SwapList.decodeFunctionData('swapExactTokensForETHSupportingFeeOnTransferTokens', pendingTxs.pending[addr][k].input)
+						// 										// console.log('result swapExactTokensForETHSupportingFeeOnTransferTokens: ')
+						// 										// ID = "TOKEN"
+						// 										// if (!scanedTransactions.some((el: any) => el.hash === pendingTxs.pending[addr][k].hash)) {
+						// 										// 	scanedTransactions.push({
+						// 										// 		hash: pendingTxs.pending[addr][k].hash,
+						// 										// 		processed: false,
+						// 										// 		data: pendingTxs.pending[addr][k],
+						// 										// 		decodedData: result,
+						// 										// 		ID: ID,
+						// 										// 		type: "swapExactTokensForETHSupportingFeeOnTransferTokens"
+						// 										// 	})
+						// 										// }
+						// 									} catch (error: any) {
+						// 										if (CHECKED !== 1) {
+						// 											let check = await checkActive();
+						// 											if (check) {
+						// 												checkPrices("token");
+						// 											} else {
+						// 												console.log('insufficient value')
+						// 											}
+						// 										} else {
+						// 											const gas = await provider.getGasPrice()
+						// 											const blockNumber = await provider.getBlockNumber();
+						// 											const currentBlock = await provider.getBlock(blockNumber)
+						// 											nextBaseFee = calcNextBlockBaseFee(currentBlock);
+						// 										}
+						// 									}
+						// 								}
+						// 							}
+						// 						}
+						// 					}
+						// 				}
+						// 			}
+						// 		}
+						// 	}
+						// } else {
+						// }
 					}
 				}
 			}
