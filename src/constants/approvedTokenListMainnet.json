@@ -5,6 +5,12 @@
         "decimal": 18,
         "pair": "0x46C752B1Da67ce438e2b73e47E3464038B3799F3"
     },
+    "0xdAC17F958D2ee523a2206206994597C13D831ec7": {
+        "name": "USDT",
+        "symbol": "USDT",
+        "decimal": 6,
+        "pair": "0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852"
+    },
     "0xFc979087305A826c2B2a0056cFAbA50aad3E6439": {
         "name": "DAFI Token",
         "symbol": "DAFI",
