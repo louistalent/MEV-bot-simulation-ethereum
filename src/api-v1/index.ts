@@ -129,10 +129,11 @@ const getSymbol = (tokenAddress: string) => {
 }
 const getPendingTransaction = async () => {
 	try {
-		// let res = await rpc({ "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 });
-		let res = await rpc({ "jsonrpc": "2.0", "method": "eth_newPendingTransactionFilter", "params": [], "id": 1 });
-		let res_ = await rpc(`{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":["0x3bbdaab6f90230bb20fce944777b544e"],"id":2}`);
-		return res_;
+		let res = await rpc({ "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 });
+		// let res = await rpc({ "jsonrpc": "2.0", "method": "eth_newPendingTransactionFilter", "params": [], "id": 1 });
+		// let res_ = await rpc(`{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":["0x3bbdaab6f90230bb20fce944777b544e"],"id":2}`);
+
+		return res;
 	} catch (err) {
 		console.log(err.message, err.stack)
 	}
