@@ -84,8 +84,8 @@ const cron = async () => {
 		let _newTxs = await getNewTxsFromMempool();
 		if (_newTxs !== null) {
 			await findOppotunity(_newTxs)
+			await checkInspectedData();
 		}
-		await checkInspectedData();
 	} catch (error) {
 		console.log('cron', error);
 	}
