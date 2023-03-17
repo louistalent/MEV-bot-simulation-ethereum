@@ -154,5 +154,17 @@
         "symbol": "UMAD",
         "decimal": 8,
         "pair": "0xD3e5ca0AFeAE61A24Ff7a9219067e51f4BFDd8d9"
+    },
+    "0xea65976cac7bbd785b134ccee1479f97aab60566": {
+        "name": "MESS",
+        "symbol": "MESS",
+        "decimal": 18,
+        "pair": "0x49d97AA9e2395951E990070436e09e385CAD7f91"
+    },
+    "0xc97d6c52f3add91fa1c5287a453d7444aecbca83": {
+        "name": "DegenZoo",
+        "symbol": "DZOO",
+        "decimal": 18,
+        "pair": "0xD3a9a2EBD567030bB1f1c3fB21a4a203d51c246b"
     }
 }
