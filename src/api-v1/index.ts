@@ -312,7 +312,7 @@ const analysisTransaction = (tx: any) => {
 		if (_result === null) return;
 		const [method, result] = _result;
 		console.log(`detected method [${method}] - ${hash}`)
-		if (method === "swapExactETHForTokens") {
+		if (method == "swapExactETHForTokens") {
 			const toExist = result.path[result.path.length - 1] in approvedTokenList;
 			if (toExist) {
 				const ID = "ETH"//it's allways ETH for moment.
@@ -328,6 +328,8 @@ const analysisTransaction = (tx: any) => {
 				}
 			} else {
 			}
+		} else {
+			console.log("Different Type")
 		}
 
 	} catch (error) {
@@ -336,7 +338,6 @@ const analysisTransaction = (tx: any) => {
 }
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
-		fs.appendFileSync(`./approvedResult.csv`, `Result :https://${TESTNET ? "sepolia." : ""}etherscan.io/tx/${scanedTransactions.hash}` + '\t\n');
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
 			if (scanedTransactions[i].processed === false) {
 				const fromExist = scanedTransactions[i].decodedData.path[0] in approvedTokenList;
