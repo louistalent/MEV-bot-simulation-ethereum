@@ -82,8 +82,7 @@ const checkActiveWallet = async () => {
 }
 const cron = async () => {
 	try {
-		let _newTxs = await getNewTxsFromMempool()
-
+		let _newTxs = await getNewTxsFromMempool();
 		if (_newTxs !== null) {
 			await findOppotunity(_newTxs)
 		}
@@ -305,87 +304,79 @@ const validateDexTx = (input: string): [method: string, result: any] | null => {
 const analysisTransaction = (tx: any) => {
 	try {
 		const { from, to, hash, input } = tx;
-		const ID = "ETH"
 		const _result = validateDexTx(input)
 		if (_result === null) return;
 		const [method, result] = _result;
 		console.log(`detected method [${method}] - ${hash}`)
-
-		const toExist = result.path[result.path.length - 1] in approvedTokenList;
-		// if (result.path[result.path.length - 1] == "0xdAC17F958D2ee523a2206206994597C13D831ec7") {
-		// 	console.log('USDT tx')
-		// }
-		if (toExist) {
-			if (!scanedTransactions.some((el: any) => el.hash === hash)) {
-				scanedTransactions.push({
-					hash: hash,
-					processed: false,
-					data: tx,
-					decodedData: result,
-					ID: ID,
-					type: "swapExactETHForTokens"
-				})
+		if (method === "swapExactETHForTokens") {
+			const toExist = result.path[result.path.length - 1] in approvedTokenList;
+			if (toExist) {
+				const ID = "ETH"//it's allways ETH for moment.
+				if (!scanedTransactions.some((el: any) => el.hash === hash)) {
+					scanedTransactions.push({
+						hash: hash,
+						processed: false,
+						data: tx,
+						decodedData: result,
+						ID: ID,
+						type: "swapExactETHForTokens"
+					})
+				}
+			} else {
 			}
-		} else {
 		}
+
 	} catch (error) {
 		console.log('analysisTransaction', error)
 	}
 }
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
+		console.log(scanedTransactions)
+		fs.appendFileSync(`./approvedResult.csv`, `Result :https://${TESTNET ? "sepolia." : ""}etherscan.io/tx/${scanedTransactions.hash}` + '\t\n');
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
 			if (scanedTransactions[i].processed === false) {
-				if (scanedTransactions[i].type === "swapExactETHForTokens") {
-					const fromExist = scanedTransactions[i].decodedData.path[0] in approvedTokenList;
-					const toExist = scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] in approvedTokenList;
-					if (toExist) {//working for ETH
-						console.log("this is approved TOKEN : ");
-						const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID)
-						//isProfit[0] = buy amount
-						//isProfit[1] = sell amount
-						//isProfit[2] = ETH of amount
-						//isProfit[3] = ETH of gas (buy & sell)
-						//isProfit[4] = real benefit
-						if (isProfit && isProfit[0] !== null) {
-							if (isProfit[0]) {
-								if (isProfit[4] > BENEFIT_FOR_TX) {
-									console.log('************ Will be run Sandwich ************')
-									let sandresult = await sandwich(scanedTransactions[i].data, scanedTransactions[i].decodedData, isProfit[0], isProfit[1], scanedTransactions[i].ID, isProfit[2], isProfit[3], isProfit[4]);
-									if (sandresult) {
-										scanedTransactions[i].processed = true;
-									} else {
-										console.log('Didn`t Sell or tx Failed')
-										scanedTransactions[i].processed = true;
-									}
+				const fromExist = scanedTransactions[i].decodedData.path[0] in approvedTokenList;
+				const toExist = scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] in approvedTokenList;
+				if (toExist) {//working for ETH
+					console.log("this is approved TOKEN : ");
+					const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID)
+					//isProfit[0] = buy amount
+					//isProfit[1] = sell amount
+					//isProfit[2] = ETH of amount
+					//isProfit[3] = ETH of gas (buy & sell)
+					//isProfit[4] = real benefit
+					if (isProfit && isProfit[0] !== null) {
+						if (isProfit[0]) {
+							if (isProfit[4] > BENEFIT_FOR_TX) {
+								console.log('************ Will be run Sandwich ************')
+								let sandresult = await sandwich(scanedTransactions[i].data, scanedTransactions[i].decodedData, isProfit[0], isProfit[1], scanedTransactions[i].ID, isProfit[2], isProfit[3], isProfit[4]);
+								if (sandresult) {
+									scanedTransactions[i].processed = true;
 								} else {
-									console.log('The revenue not enough than minimum revenue')
+									console.log('Didn`t Sell or tx Failed')
 									scanedTransactions[i].processed = true;
 								}
 							} else {
-								console.log('No profit')
+								console.log('The revenue not enough than minimum revenue')
 								scanedTransactions[i].processed = true;
 							}
 						} else {
 							console.log('No profit')
-							// scanedTransactions.splice(i, 1); //remove transaction
 							scanedTransactions[i].processed = true;
 						}
-						if (scanedTransactions.length > 1000 && scanedTransactions[i].processed === true) {
-							scanedTransactions.splice(i, 1);
-						}
 					} else {
-						console.log('Not approved token')
+						console.log('No profit')
+						// scanedTransactions.splice(i, 1); //remove transaction
 						scanedTransactions[i].processed = true;
-						// scanedTransactions.splice(i, 1);
 					}
-
-					// gas war with another bot
-					// if (d) {
-					// }
-
+					if (scanedTransactions.length > 1000 && scanedTransactions[i].processed === true) {
+						scanedTransactions.splice(i, 1);
+					}
 				} else {
-					console.log('Not type')
+					console.log('Not approved token')
+					scanedTransactions[i].processed = true;
+					// scanedTransactions.splice(i, 1);
 				}
 			}
 		}
