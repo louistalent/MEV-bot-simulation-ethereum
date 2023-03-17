@@ -130,5 +130,17 @@
         "symbol": "RJV",
         "decimal": 6,
         "pair": "0x30e3270FD3d1589672e8da2F15c7076323C9Aa10"
+    },
+    "0x9e32b13ce7f2e80a01932b42553652e053d6ed8e": {
+        "name": "Metis Token",
+        "symbol": "Metis",
+        "decimal": 18,
+        "pair": "0xd03dffD02Db4B076e3eeD9272a6A243a23DE16e3"
+    },
+    "0x0b521605bb5639d22d0a18ed7393481ad686331b": {
+        "name": "Neyma Inu",
+        "symbol": "NEYMA",
+        "decimal": 18,
+        "pair": "0x55f26293a2cF63589fdb4aE60E286Cfd6b40595C"
     }
 }
