@@ -178,5 +178,11 @@
         "symbol": "LSD",
         "decimal": 18,
         "pair": "0x3322f41dfa379B6D3050C1e271B0b435b3Ee3303"
+    },
+    "0xae697f994fc5ebc000f8e22ebffee04612f98a0d": {
+        "name": "LGCY Network",
+        "symbol": "LGCY ",
+        "decimal": 18,
+        "pair": "0xDFeA03Ed1eC53116CD6eA45373cBB6E8823eF59D"
     }
 }
