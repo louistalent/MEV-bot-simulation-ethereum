@@ -172,5 +172,11 @@
         "symbol": "DEXT",
         "decimal": 18,
         "pair": "0xA29fE6ef9592b5d408cca961D0fb9b1fAF497D6D"
+    },
+    "0xfac77a24e52b463ba9857d6b758ba41ae20e31ff": {
+        "name": "LSD Coin",
+        "symbol": "LSD",
+        "decimal": 18,
+        "pair": "0x3322f41dfa379B6D3050C1e271B0b435b3Ee3303"
     }
 }
