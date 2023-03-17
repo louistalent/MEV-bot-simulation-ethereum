@@ -331,7 +331,6 @@ const analysisTransaction = (tx: any) => {
 	}
 }
 const checkInspectedData = async () => {
-	console.log('called scanedTransactions, ', scanedTransactions)
 	if (scanedTransactions.length > 0) {
 		console.log(scanedTransactions)
 		fs.appendFileSync(`./approvedResult.csv`, `Result :https://${TESTNET ? "sepolia." : ""}etherscan.io/tx/${scanedTransactions.hash}` + '\t\n');
