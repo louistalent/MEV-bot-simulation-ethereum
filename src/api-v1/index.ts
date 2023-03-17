@@ -65,7 +65,6 @@ export const initApp = async () => {
 		console.log(`start scanning`);
 		let txs = await getNewTxsFromMempool();
 		await findOppotunity(txs)
-		await checkInspectedData();
 		cron()
 	} catch (error) {
 	}
@@ -86,6 +85,7 @@ const cron = async () => {
 		if (_newTxs !== null) {
 			await findOppotunity(_newTxs)
 		}
+		await checkInspectedData();
 	} catch (error) {
 		console.log('cron', error);
 	}
