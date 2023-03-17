@@ -142,5 +142,17 @@
         "symbol": "NEYMA",
         "decimal": 18,
         "pair": "0x55f26293a2cF63589fdb4aE60E286Cfd6b40595C"
+    },
+    "0x2bd0fb740e403b505a3146f9ac02df883fd5c3fc": {
+        "name": "K9",
+        "symbol": "K9",
+        "decimal": 18,
+        "pair": "0xEc223245A62d6AFCa048F8Edb9504A3b09ec85cB"
+    },
+    "0x31c2415c946928e9fd1af83cdfa38d3edbd4326f": {
+        "name": "UMAD",
+        "symbol": "UMAD",
+        "decimal": 8,
+        "pair": "0xD3e5ca0AFeAE61A24Ff7a9219067e51f4BFDd8d9"
     }
 }
