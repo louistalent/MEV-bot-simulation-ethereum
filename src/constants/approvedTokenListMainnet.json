@@ -166,5 +166,11 @@
         "symbol": "DZOO",
         "decimal": 18,
         "pair": "0xD3a9a2EBD567030bB1f1c3fB21a4a203d51c246b"
+    },
+    "0xfb7b4564402e5500db5bb6d63ae671302777c75a": {
+        "name": "DEXTools",
+        "symbol": "DEXT",
+        "decimal": 18,
+        "pair": "0xA29fE6ef9592b5d408cca961D0fb9b1fAF497D6D"
     }
 }
