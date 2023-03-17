@@ -56,7 +56,7 @@ let scanedTransactions: any = [];
 
 const signedUniswap2Pair = async (pairContractAddress: string) => {
 	const Uniswap2Pair = new ethers.Contract(pairContractAddress, uniswapPairABI, provider);
-	return Uniswap2Pair
+	return Uniswap2Pair;
 }
 
 let cron_: any;
@@ -174,6 +174,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 
 		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
 		console.log(`Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
+		fs.appendFileSync(`./approvedResult.csv`, `Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy)} ${toToken})` + '\t\n');
 
 		let changedPoolIn = Number(poolIn) + Number(botAmountIn);
 		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy));
@@ -182,12 +183,15 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		changedPoolIn = changedPoolIn + botAmountIn;
 		changedPoolOut = changedPoolOut - Number(Format(UserTx));
 		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
+		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})` + '\t\n');
 
-		if (Number(UserTx) >= Number(ethers.utils.formatUnits(decodedDataOfInput.amountOutMin, decimalOut))) {
+		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
 			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
 			console.log(`Sell : from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
+			fs.appendFileSync(`./approvedResult.csv`, `from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})` + '\t\n');
 			let Revenue = Number(Format(backsell)) - botAmountIn;
 			console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${botAmountIn} ${fromToken})= ${Revenue} ${fromToken}`)
+			fs.appendFileSync(`./approvedResult.csv`, `Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${botAmountIn} ${fromToken})= ${Revenue} ${fromToken}` + '\t\n');
 			if (Number(Format(backsell)) < botAmountIn) {
 				console.log(`bot will sandwith but no profit`)
 				return null
@@ -332,7 +336,6 @@ const analysisTransaction = (tx: any) => {
 }
 const checkInspectedData = async () => {
 	if (scanedTransactions.length > 0) {
-		console.log(scanedTransactions)
 		fs.appendFileSync(`./approvedResult.csv`, `Result :https://${TESTNET ? "sepolia." : ""}etherscan.io/tx/${scanedTransactions.hash}` + '\t\n');
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
 			if (scanedTransactions[i].processed === false) {
@@ -555,7 +558,6 @@ router.post('/', async (req: express.Request, res: express.Response) => {
 		}
 	}
 })
-
 const method_list = {
 	/**
 	 * get coin price
