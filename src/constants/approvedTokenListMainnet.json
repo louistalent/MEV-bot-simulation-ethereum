@@ -238,5 +238,35 @@
         "symbol": "EGGS",
         "decimal": 18,
         "pair": "0xc54ba7aabe7164ca2aa092900060fe2ba6eccd8b"
+    },
+    "0xfa5047c9c78b8877af97bdcb85db743fd7313d4a": {
+        "name": "ROOK",
+        "symbol": "ROOK",
+        "decimal": 18,
+        "pair": "0x70ec2fA6Eccf4010eaf572d1C1a7bCbC72DEC983"
+    },
+    "0xc0f9bd5fa5698b6505f643900ffa515ea5df54a9": {
+        "name": "Donut",
+        "symbol": "DONUT",
+        "decimal": 18,
+        "pair": "0x718Dd8B743ea19d71BDb4Cb48BB984b73a65cE06"
+    },
+    "0x4c6ec08cf3fc987c6c4beb03184d335a2dfc4042": {
+        "name": "Paint",
+        "symbol": "PAINT",
+        "decimal": 18,
+        "pair": "0x478893fcBFffC3283FEce2a216229e1c34093980"
+    },
+    "0xbb9bc244d798123fde783fcc1c72d3bb8c189413": {
+        "name": "TheDAO",
+        "symbol": "TheDAO",
+        "decimal": 16,
+        "pair": "0xE1eCaDb5FEC254c2c893C230b935Db30b8FfF0db"
+    },
+    "0xf293d23bf2cdc05411ca0eddd588eb1977e8dcd4": {
+        "name": "Sylo",
+        "symbol": "SYLO",
+        "decimal": 18,
+        "pair": "0x2A66392317698C5818df7A72a58556049f0Ae6f2"
     }
 }
