@@ -89,7 +89,7 @@ const cron = async () => {
 		console.log('cron', error);
 	}
 
-	setTimeout(cron, cronTime)
+	// setTimeout(cron, cronTime)
 }
 const getDecimal = (tokenAddress: string) => {
 	const tokens = approvedTokenList;
