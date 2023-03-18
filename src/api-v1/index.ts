@@ -288,7 +288,6 @@ const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
-			console.log("New hash : ", v.hash)
 			analysisTransaction(v)
 		}
 	} catch (error) {
@@ -309,10 +308,10 @@ const analysisTransaction = (tx: any) => {
 		const _result = validateDexTx(input)
 		if (_result === null) return;
 		const [method, result] = _result;
-		console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
 		if (method == "swapExactETHForTokens") {
 			const toExist = result.path[result.path.length - 1] in approvedTokenList;
 			if (toExist) {
+				console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
 				const ID = "ETH"//it's allways ETH for moment.
 				if (!scanedTransactions.some((el: any) => el.hash === hash)) {
 					scanedTransactions.push({
