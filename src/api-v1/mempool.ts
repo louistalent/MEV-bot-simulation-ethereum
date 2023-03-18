@@ -17,16 +17,13 @@ export const getNewTxsFromMempool = async (): Promise<{ [txId: string]: any }> =
         const __new = {} as { [key: string]: any }
         const pendingTxs = await getPendingTransaction();
         if (pendingTxs) {
-            let i = 0;
             for (let addr in pendingTxs.pending) {
                 for (let k in pendingTxs.pending[addr]) {
-                    i++;
                     const v = pendingTxs.pending[addr][k];
                     __pool[k] = v;
                     if (_oldTxs[k] === undefined) __new[k] = v;
                 }
             }
-            // console.log('i : total length:  ', i);
             _oldTxs = __pool;
             return Object.keys(__new).length === 0 ? null : __new;
         }

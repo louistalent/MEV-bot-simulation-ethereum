@@ -81,9 +81,8 @@ const checkActiveWallet = async () => {
 const cron = async () => {
 	try {
 		let _newTxs = await getNewTxsFromMempool();
-
 		if (_newTxs !== null) {
-			setlog("_new txs", _newTxs)
+			setlog("_new txs", _newTxs.hash)
 			await findOppotunity(_newTxs)
 		}
 		await checkInspectedData();
