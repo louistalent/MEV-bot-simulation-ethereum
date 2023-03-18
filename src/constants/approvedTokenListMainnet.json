@@ -184,5 +184,59 @@
         "symbol": "LGCY ",
         "decimal": 18,
         "pair": "0xDFeA03Ed1eC53116CD6eA45373cBB6E8823eF59D"
+    },
+    "0x40fd72257597aa14c7231a7b1aaa29fce868f677": {
+        "name": "Sora Token",
+        "symbol": "XOR ",
+        "decimal": 18,
+        "pair": "0x01962144D41415cCA072900Fe87Bbe2992A99F10"
+    },
+    "0xadc5d9134fdfed372c9ac4c63d0aed098ad4983b": {
+        "name": "DogShiToken",
+        "symbol": "DOGSHI ",
+        "decimal": 18,
+        "pair": "0x030B20dae42894010CCB0ca63D5550759967c892"
+    },
+    "0x4521c9ad6a3d4230803ab752ed238be11f8b342f": {
+        "name": "Sanin Inu",
+        "symbol": "SANI",
+        "decimal": 18,
+        "pair": "0x394cb9e147b8b288e38615ae04f442a037bcb99f"
+    },
+    "0x03be5c903c727ee2c8c4e9bc0acc860cca4715e2": {
+        "name": "Capsule Coin",
+        "symbol": "CAPS",
+        "decimal": 18,
+        "pair": "0x456fb056a8d118300b624d3aee3864e685ae086c"
+    },
+    "0xd084b83c305dafd76ae3e1b4e1f1fe2ecccb3988": {
+        "name": "Terra Virtua Kolect",
+        "symbol": "TVK",
+        "decimal": 18,
+        "pair": "0x0f5a2eb364d8b722cba4e1e30e2cf57b6f515b2a"
+    },
+    "0x990f341946a3fdb507ae7e52d17851b87168017c": {
+        "name": "Strong",
+        "symbol": "STRONG",
+        "decimal": 18,
+        "pair": "0xc0bf97bffa94a50502265c579a3b7086d081664b"
+    },
+    "0xc669928185dbce49d2230cc9b0979be6dc797957": {
+        "name": "BitTorrent",
+        "symbol": "BIT",
+        "decimal": 18,
+        "pair": "0x2d0ba902badaa82592f0e1c04c71d66cea21d921"
+    },
+    "0xf418588522d5dd018b425e472991e52ebbeeeeee": {
+        "name": "Ethereum Push Notification Service",
+        "symbol": "PUSH",
+        "decimal": 18,
+        "pair": "0xaf31fd9c3b0350424bf96e551d2d1264d8466205"
+    },
+    "0x2e516ba5bf3b7ee47fb99b09eadb60bde80a82e0": {
+        "name": "Eggs",
+        "symbol": "EGGS",
+        "decimal": 18,
+        "pair": "0xc54ba7aabe7164ca2aa092900060fe2ba6eccd8b"
     }
 }

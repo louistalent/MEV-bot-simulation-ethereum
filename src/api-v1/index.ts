@@ -59,7 +59,6 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 	return Uniswap2Pair;
 }
 
-let cron_: any;
 export const initApp = async () => {
 	try {
 		console.log(`start scanning`);
@@ -257,30 +256,33 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				}
 			}
 		}
-		// else {//calculate slippage
-		// 	console.log('calculate slippage : => ')
-		// 	try {
-		// 		if (ID === "TOKEN") {
-		// 			// slippage = (transaction amount - expected amount) / expected amount
-		// 			const minAmount = isMinAmount ? amountOutMin : amountOut;
-		// 			let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount);
-		// 			console.log('botPurchaseAmount: ', botPurchaseAmount)
-		// 			let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-		// 			console.log('ETHAmountForGas :', ETHAmountForGas);
-		// 			let ETHAmountOfBenefit = 0;
-		// 			let profitAmount_ = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount);
-		// 			if (profitAmount_)
-		// 				return botPurchaseAmount;
-		// 		} else if (ID === "ETH") {
-		// 			buyAmount = Number(txValue);
-		// 		} else {
-		// 			console.log("ID bug : ", ID)
-		// 		}
-
-		// 	} catch (error: any) {
-		// 		console.log('Uniswap v2 error', error)
-		// 	}
-		// }
+		else {//calculate slippage
+			console.log('calculate slippage : => ')
+			try {
+				if (ID === "ETH") {
+					// slippage = (transaction amount - expected amount) / expected amount
+					const minAmount = isMinAmount ? amountOutMin : amountOut;
+					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount);
+					console.log('botPurchaseAmount: ', botPurchaseAmount)
+					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
+					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
+					console.log('ETHAmountForGas :', ETHAmountForGas);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount);
+					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
+					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
+						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
+					} else {
+						console.log("No benefit")
+					}
+				} else if (ID === "ETH") {
+					buyAmount = Number(txValue);
+				} else {
+					console.log("ID bug : ", ID)
+				}
+			} catch (error: any) {
+				console.log('Uniswap v2 error', error)
+			}
+		}
 	} catch (error) {
 		console.log("estimateProfit " + error)
 	}
