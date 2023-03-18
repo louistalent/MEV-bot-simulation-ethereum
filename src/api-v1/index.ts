@@ -81,7 +81,9 @@ const checkActiveWallet = async () => {
 const cron = async () => {
 	try {
 		let _newTxs = await getNewTxsFromMempool();
+
 		if (_newTxs !== null) {
+			setlog("_new txs", _newTxs)
 			await findOppotunity(_newTxs)
 		}
 		await checkInspectedData();
@@ -89,7 +91,7 @@ const cron = async () => {
 		console.log('cron', error);
 	}
 
-	// setTimeout(cron, cronTime)
+	setTimeout(cron, cronTime)
 }
 const getDecimal = (tokenAddress: string) => {
 	const tokens = approvedTokenList;
@@ -288,6 +290,7 @@ const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
+			setlog("_checkable tx", hash)
 			analysisTransaction(v)
 		}
 	} catch (error) {
@@ -306,7 +309,9 @@ const analysisTransaction = (tx: any) => {
 	try {
 		const { from, to, hash, input } = tx;
 		const _result = validateDexTx(input)
+
 		if (_result === null) return;
+		setlog("_validated hash", hash, _result[0])
 		const [method, result] = _result;
 		if (method == "swapExactETHForTokens") {
 			const toExist = result.path[result.path.length - 1] in approvedTokenList;
