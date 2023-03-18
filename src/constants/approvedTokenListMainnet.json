@@ -268,5 +268,11 @@
         "symbol": "SYLO",
         "decimal": 18,
         "pair": "0x2A66392317698C5818df7A72a58556049f0Ae6f2"
+    },
+    "0xEa65976Cac7BBD785b134CCEe1479F97Aab60566": {
+        "name": "MESS",
+        "symbol": "MESS",
+        "decimal": 18,
+        "pair": "0x49d97AA9e2395951E990070436e09e385CAD7f91"
     }
 }
