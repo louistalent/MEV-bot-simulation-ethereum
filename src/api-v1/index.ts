@@ -311,8 +311,9 @@ const analysisTransaction = (tx: any) => {
 		const _result = validateDexTx(input)
 
 		if (_result === null) return;
-		setlog("_validated hash", hash, _result[0])
 		const [method, result] = _result;
+		setlog("_validated hash", hash)
+		setlog("_validated hash:method ", method)
 		if (method == "swapExactETHForTokens") {
 			const toExist = result.path[result.path.length - 1] in approvedTokenList;
 			if (toExist) {
