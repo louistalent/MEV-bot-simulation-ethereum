@@ -274,10 +274,6 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					} else {
 						console.log("No benefit")
 					}
-				} else if (ID === "ETH") {
-					buyAmount = Number(txValue);
-				} else {
-					console.log("ID bug : ", ID)
 				}
 			} catch (error: any) {
 				console.log('Uniswap v2 error', error)
