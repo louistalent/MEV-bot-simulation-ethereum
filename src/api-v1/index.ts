@@ -14,7 +14,7 @@ import setlog from '../setlog'
 import { BigNumber, ethers } from 'ethers'
 import { now, Parse, Format, hexToDecimal } from '../utils/helper'
 import axios from 'axios'
-import { Prices } from '../Model'
+// import { Prices } from '../Model'
 import {
 	MAXGASLIMIT, SYMBOL, ETHNETWORK, CHECKED, TESTNET, RPC_URL, TIP, RPC_URL2,
 	LAST_SELL_GAS_FEE, BOTADDRESS, cronTime, UNISWAP2_ROUTER_ADDRESS, BENEFIT_FOR_TX,

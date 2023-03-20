@@ -14,9 +14,9 @@ process.env.NODE_NO_WARNINGS = "1"
 import setlog from './setlog'
 // import Model from '@src/model/Users/Users'
 import Server from './server'
-import Model from './Model'
+// import Model from './Model'
 
 process.on("uncaughtException", (err: Error) => console.log('exception', err))
 process.on("unhandledRejection", (err: Error) => console.log('rejection', err))
 
-Model.open().then(() => Server())
+// Model.open().then(() => Server())
