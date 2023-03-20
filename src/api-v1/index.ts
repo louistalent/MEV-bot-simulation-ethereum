@@ -32,7 +32,7 @@ import { sign } from 'crypto';
 import approvedTokenListTestnet from "../constants/approvedTokenListTestnet.json";
 import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json";
 import { checkPrices } from "../utils/checkPrice";
-import { getNewTxsFromMempool } from './mempool';
+import { getNewTxsFromMempool, getPendingTransaction_ } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
@@ -62,9 +62,10 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 export const initApp = async () => {
 	try {
 		console.log(`start scanning`);
-		let txs = await getNewTxsFromMempool();
-		await findOppotunity(txs)
-		cron()
+		getPendingTransaction_()
+		// let txs = await getNewTxsFromMempool();
+		// await findOppotunity(txs)
+		// cron()
 	} catch (error) {
 	}
 }

@@ -1,5 +1,6 @@
+import Web3 from "web3";
 import rpc from "./blockchain";
-
+var web3 = new Web3('wss://mainnet.infura.io/ws/v3/feb74e7522fc4b86ac7eb4fb2102a855');
 let _oldTxs = {} as { [txId: string]: any }
 
 const getPendingTransaction = async () => {
@@ -27,6 +28,29 @@ export const getNewTxsFromMempool = async (): Promise<{ [txId: string]: any }> =
             _oldTxs = __pool;
             return Object.keys(__new).length === 0 ? null : __new;
         }
+    } catch (error) {
+        console.log('getNewTxs', error)
+    }
+    return null
+}
+export const getPendingTransaction_ = async () => {
+    try {
+        let subscription = web3.eth.subscribe('pendingTransactions', function (error, result) { })
+            .on("data", function (transactionHash) {
+                web3.eth.getTransaction(transactionHash)
+                    .then(function (transaction) {
+                        console.log('transaction :', transaction);
+                        // createNode(transaction.from, transaction.to);
+                    });
+            })
+    } catch (err) {
+        console.log(err.message, err.stack)
+    }
+}
+
+export const getNewTxsFromMempool_ = async (): Promise<{ [txId: string]: any }> => {
+    try {
+        // getPendingTransaction_()
     } catch (error) {
         console.log('getNewTxs', error)
     }
