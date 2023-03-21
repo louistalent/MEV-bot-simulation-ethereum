@@ -97,7 +97,7 @@ const getDecimal = (tokenAddress: string) => {
 	const tokens = approvedTokenList;
 	const result = tokenAddress in tokens;
 	if (result) {
-		return tokens[`${tokenAddress}`].decimal;
+		return Number(tokens[`${tokenAddress}`].decimal);
 	} else {
 		return 18;
 	}
@@ -181,9 +181,9 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 
 		let UserTx = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
 		changedPoolIn = changedPoolIn + botAmountIn;
-		changedPoolOut = changedPoolOut - Number(Format(UserTx));
-		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
-		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})` + '\t\n');
+		changedPoolOut = changedPoolOut - Number(Format(UserTx, decimalOut));
+		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
+		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})` + '\t\n');
 		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${decodedDataOfInput.amountOutMin}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
@@ -199,7 +199,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 			}
 			return [Revenue, frontbuy]
 		} else {
-			console.log(`User expected min amount is ${Number(Format(decodedDataOfInput.amountOutMin, decimalOut))} but got ${Number(Format(UserTx))}`)
+			console.log(`User expected min amount is ${Number(Format(decodedDataOfInput.amountOutMin, decimalOut))} but got ${Number(Format(UserTx, decimalOut))}`)
 			console.log(`User transaction will fail. Cannot sandwith with ${botAmountIn} ETH`)
 			return null
 		}
