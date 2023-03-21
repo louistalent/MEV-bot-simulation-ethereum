@@ -41,11 +41,12 @@ export const getPendingTransaction_ = async () => {
             .on("data", function (transactionHash) {
                 web3.eth.getTransaction(transactionHash)
                     .then(function (transaction) {
-                        if (transaction.to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
-                            console.log('transaction :', transaction.hash);
-                            i++
-                            console.log("Number: ", i)
-                        }
+                        if (transaction)
+                            if (transaction.to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
+                                console.log('transaction :', transaction.hash);
+                                i++
+                                console.log("Number: ", i)
+                            }
                         // createNode(transaction.from, transaction.to);
                     });
             })
