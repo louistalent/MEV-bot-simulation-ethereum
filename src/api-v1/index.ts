@@ -184,7 +184,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		changedPoolOut = changedPoolOut - Number(Format(UserTx));
 		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
 		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})` + '\t\n');
-		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${botAmountIn}` + '\t\n');
+		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${decodedDataOfInput.amountOutMin}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
 			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
