@@ -32,7 +32,7 @@ import { sign } from 'crypto';
 import approvedTokenListTestnet from "../constants/approvedTokenListTestnet.json";
 import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json";
 import { checkPrices } from "../utils/checkPrice";
-import { getNewTxsFromMempool, getPendingTransaction_ } from './mempool';
+import { getNewTxsFromMempool } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
@@ -61,11 +61,11 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 
 export const initApp = async () => {
 	try {
-		console.log(`start scanning`);
-		await getPendingTransaction_()
+		console.log(`start scanning : `);
+		// await getPendingTransaction_()
 		// let txs = await getNewTxsFromMempool();
 		// await findOppotunity(txs)
-		// cron()
+		cron()
 	} catch (error) {
 		console.log('initApp', initApp)
 	}
@@ -152,14 +152,13 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	return botPurchaseAmount;
 
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction?: any) => {
 	try {
 		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
 		const poolToken0 = await signedUniswap2Pair_.token0();
 		const pairReserves = await signedUniswap2Pair_.getReserves();
 
-		let poolIn = "";
-		let poolOut = "";
+		let poolIn = "", poolOut = "";
 		if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
 			poolIn = web3.utils.fromWei(pairReserves._reserve0.toString())
 			poolOut = web3.utils.fromWei(pairReserves._reserve1.toString())
@@ -186,6 +185,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		changedPoolOut = changedPoolOut - Number(Format(UserTx));
 		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})`)
 		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx)} ${toToken})` + '\t\n');
+		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${botAmountIn}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
 			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
@@ -233,7 +233,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
 				console.log('ETHAmountForGas :', ETHAmountForGas);
-				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount)
+				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction)
 				if (profitAmount_ !== null) {
 					if (profitAmount_[0])
 						return [buyAmount, profitAmount_[1]];
@@ -245,7 +245,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 			} else if (ID === "ETH") {
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount)
+				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction)
 				if (ETHOfProfitAmount !== null) {
 					let realBenefit = Number(ETHOfProfitAmount[0]) - Number(ETHAmountForGas);
 					console.log(`Real: Benefit ${Number(ETHOfProfitAmount[0])} - Gas ${Number(ETHAmountForGas)} = `, realBenefit)
@@ -270,7 +270,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
-					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction);
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
@@ -319,7 +319,7 @@ const analysisTransaction = (tx: any) => {
 			const toExist = result.path[result.path.length - 1] in approvedTokenList;
 			if (toExist) {
 				console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
-				const ID = "ETH"//it's allways ETH for moment.
+				const ID = "ETH"//it's always ETH for moment.
 				if (!scanedTransactions.some((el: any) => el.hash === hash)) {
 					scanedTransactions.push({
 						hash: hash,

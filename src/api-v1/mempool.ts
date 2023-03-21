@@ -34,14 +34,17 @@ export const getNewTxsFromMempool = async (): Promise<{ [txId: string]: any }> =
     }
     return null
 }
-export const getPendingTransaction_ = async () => {
+export const getPendingTransaction_web3 = async () => {
     try {
         let i = 0;
-        let subscription = web3.eth.subscribe('pendingTransactions', function (error, result) { })
+        let subscription = web3.eth.subscribe('pendingTransactions', function (error, result) {
+            console.log("result : ")
+            console.log(result)
+        })
             .on("data", function (transactionHash) {
                 web3.eth.getTransaction(transactionHash)
                     .then(function (transaction) {
-                        if (transaction !== null)
+                        if (transaction && transaction !== null)
                             if (transaction.to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
                                 console.log('transaction :', transaction.hash);
                                 i++
@@ -53,13 +56,4 @@ export const getPendingTransaction_ = async () => {
     } catch (err) {
         console.log(err.message, err.stack)
     }
-}
-
-export const getNewTxsFromMempool_ = async (): Promise<{ [txId: string]: any }> => {
-    try {
-        // getPendingTransaction_()
-    } catch (error) {
-        console.log('getNewTxs', error)
-    }
-    return null
 }
