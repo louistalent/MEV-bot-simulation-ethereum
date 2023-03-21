@@ -62,7 +62,7 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 export const initApp = async () => {
 	try {
 		console.log(`start scanning`);
-		getPendingTransaction_()
+		await getPendingTransaction_()
 		// let txs = await getNewTxsFromMempool();
 		// await findOppotunity(txs)
 		// cron()

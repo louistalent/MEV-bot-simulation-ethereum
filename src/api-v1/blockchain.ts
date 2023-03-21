@@ -1,7 +1,8 @@
+import { RPC_URL2 } from "../constants";
 import axios from "axios";
 
 const rpc = async (json: any) => {
-    const res = await axios.post(`http://localhost:8545`, json)
+    const res = await axios.post(`${RPC_URL2}`, json)
     return res.data.result;
 }
 

@@ -10,8 +10,8 @@ export const Prices = db.collection<SchemaTransactions>('transactions');
 
 const open = async () => {
 	try {
-		await client.connect()
-		console.log('connected to MongoDB')
+		// await client.connect()
+		// console.log('connected to MongoDB')
 		// Prices.createIndex({ coin: 1 }, { unique: true })
 	} catch (error) {
 		console.log('Connection to MongoDB failed', error)

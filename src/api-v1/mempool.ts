@@ -1,3 +1,4 @@
+import { UNISWAP2_ROUTER_ADDRESS } from "@src/constants";
 import Web3 from "web3";
 import rpc from "./blockchain";
 var web3 = new Web3('wss://mainnet.infura.io/ws/v3/feb74e7522fc4b86ac7eb4fb2102a855');
@@ -35,11 +36,16 @@ export const getNewTxsFromMempool = async (): Promise<{ [txId: string]: any }> =
 }
 export const getPendingTransaction_ = async () => {
     try {
+        let i = 0;
         let subscription = web3.eth.subscribe('pendingTransactions', function (error, result) { })
             .on("data", function (transactionHash) {
                 web3.eth.getTransaction(transactionHash)
                     .then(function (transaction) {
-                        console.log('transaction :', transaction);
+                        if (transaction.to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
+                            console.log('transaction :', transaction.hash);
+                            i++
+                            console.log("Number: ", i)
+                        }
                         // createNode(transaction.from, transaction.to);
                     });
             })
