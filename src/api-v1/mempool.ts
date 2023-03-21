@@ -41,7 +41,7 @@ export const getPendingTransaction_ = async () => {
             .on("data", function (transactionHash) {
                 web3.eth.getTransaction(transactionHash)
                     .then(function (transaction) {
-                        if (transaction)
+                        if (transaction !== null)
                             if (transaction.to.toLowerCase() == UNISWAP2_ROUTER_ADDRESS.toLowerCase()) {
                                 console.log('transaction :', transaction.hash);
                                 i++
