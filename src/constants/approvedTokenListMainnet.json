@@ -286,5 +286,11 @@
         "symbol": "FDT",
         "decimal": 18,
         "pair": "0x97E32ce3Fdd61519123cbA7BF7eC2d1ab50bD7d0"
+    },
+    "0x47A17ca09e43C6c80691671F924aae9737a780cf": {
+        "name": "Finance2080",
+        "symbol": "2080",
+        "decimal": 18,
+        "pair": "0x47A17ca09e43C6c80691671F924aae9737a780cf"
     }
 }

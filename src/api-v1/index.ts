@@ -172,14 +172,14 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		let fromToken = getSymbol(decodedDataOfInput.path[0])
 		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
-		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
-		console.log(`Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy)} ${toToken})`)
-		fs.appendFileSync(`./approvedResult.csv`, `Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy)} ${toToken})` + '\t\n');
+		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(botAmountIn, decimalIn), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
+		console.log(`Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy, decimalOut)} ${toToken})`)
+		fs.appendFileSync(`./approvedResult.csv`, `Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy, decimalOut)} ${toToken})` + '\t\n');
 
 		let changedPoolIn = Number(poolIn) + Number(botAmountIn);
-		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy));
+		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy, decimalOut));
 
-		let UserTx = await signedUniswap2Router.getAmountOut(Parse(botAmountIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
+		let UserTx = await signedUniswap2Router.getAmountOut(Parse(botAmountIn, decimalIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
 		changedPoolIn = changedPoolIn + botAmountIn;
 		changedPoolOut = changedPoolOut - Number(Format(UserTx, decimalOut));
 		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
@@ -187,9 +187,9 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${decodedDataOfInput.amountOutMin}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
-			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut), Parse(changedPoolIn))
-			console.log(`Sell : from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
-			fs.appendFileSync(`./approvedResult.csv`, `from (${Format(frontbuy)} ${toToken}) to (${Format(backsell)} ${fromToken})` + '\t\n');
+			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut, decimalOut), Parse(changedPoolIn, decimalIn))
+			console.log(`Sell : from (${Format(frontbuy, decimalOut)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
+			fs.appendFileSync(`./approvedResult.csv`, `from (${Format(frontbuy, decimalOut)} ${toToken}) to (${Format(backsell)} ${fromToken})` + '\t\n');
 			let Revenue = Number(Format(backsell)) - botAmountIn;
 			console.log(`Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${botAmountIn} ${fromToken})= ${Revenue} ${fromToken}`)
 			fs.appendFileSync(`./approvedResult.csv`, `Expected Profit :Profit(${Format(backsell)} ${fromToken})-Buy(${botAmountIn} ${fromToken})= ${Revenue} ${fromToken}` + '\t\n');
@@ -210,16 +210,17 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 }
 const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string) => {
 	try {
+		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let buyAmount: number = 0;
 		const txValue = web3.utils.fromWei(transaction.value.toString());
 		let amountOutMin = '';
 		let amountOut = '';
 		let isMinAmount = true;
 		try {
-			amountOutMin = web3.utils.fromWei(decodedDataOfInput.amountOutMin.toString())
+			amountOutMin = Format(decodedDataOfInput.amountOutMin.toString(), decimalOut)
 			isMinAmount = true;
 		} catch (error: any) {
-			amountOut = web3.utils.fromWei(decodedDataOfInput.amountOut.toString())
+			amountOut = Format(decodedDataOfInput.amountOut.toString(), decimalOut)
 			isMinAmount = false;
 		}
 		if (Number(amountOutMin) === 0 || Number(amountOut) === 0) {
@@ -227,7 +228,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				// amountIn  -> amountOutMin
 				// amountOut -> amountInMax
 				let inputValueOfTransaction = isMinAmount ? decodedDataOfInput.amountIn : decodedDataOfInput.amountInMax
-				let inputValueOfTransaction_ = web3.utils.fromWei(inputValueOfTransaction.toString())
+				let inputValueOfTransaction_ = Format(inputValueOfTransaction.toString(), decimalOut)
 				buyAmount = Number(inputValueOfTransaction_)
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
