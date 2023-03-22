@@ -145,9 +145,8 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let X = pairPool[0];
 	let Y = pairPool[1];
 	let marketPrice = X / Y;
-	let paidToken = ((slippage - 0.2) + 100) / 100 * marketPrice
+	let paidToken = ((slippage - 0.05) + 100) / 100 * marketPrice
 	let botPurchaseAmount = ((paidToken * Y - X) + Math.sqrt(Math.pow((X - paidToken * Y), 2) + 4 * X * Y * (paidToken + Y))) / 2;
-	console.log("botPurchaseAmount : ", botPurchaseAmount)
 	return botPurchaseAmount;
 }
 const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, signedUniswap2Pair_?: any) => {
