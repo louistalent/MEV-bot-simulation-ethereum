@@ -213,17 +213,17 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let buyAmount: number = 0;
 		const txValue = web3.utils.fromWei(transaction.value.toString());
-		let amountOutMin = '';
-		let amountOut = '';
-		let isMinAmount = true;
+		let amountOutMin: number = 100;
+		let amountOut: number = 100;
+		let isMinAmount: boolean = true;
 		try {
-			amountOutMin = Format(decodedDataOfInput.amountOutMin.toString(), decimalOut)
+			amountOutMin = Number(Format(decodedDataOfInput.amountOutMin.toString(), decimalOut))
 			isMinAmount = true;
 		} catch (error: any) {
-			amountOut = Format(decodedDataOfInput.amountOut.toString(), decimalOut)
+			amountOut = Number(Format(decodedDataOfInput.amountOut.toString(), decimalOut))
 			isMinAmount = false;
 		}
-		if (Number(amountOutMin) === 0 || Number(amountOut) === 0) {
+		if (amountOutMin === 0 || amountOut === 0) {
 			if (ID === "TOKEN") {
 				// amountIn  -> amountOutMin
 				// amountOut -> amountInMax
