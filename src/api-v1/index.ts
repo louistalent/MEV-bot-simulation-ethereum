@@ -136,11 +136,10 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 		console.log('calculateETH :', error)
 	}
 }
-const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any) => {
+const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, signedUniswap2Pair_: any) => {
 	const transactionAmount = await signedUniswap2Router.getAmountsOut(transaction.value, decodedDataOfInput.path);// amount, path
-	const pairPool = await signedUniswap2Router.getReserves(UNISWAPV2_FACTORY_ADDRESS, decodedDataOfInput.path[0], decodedDataOfInput.path[decodedDataOfInput.path.length - 1]);// amount, path
+	const pairPool = await signedUniswap2Pair_.getReserves(UNISWAPV2_FACTORY_ADDRESS, decodedDataOfInput.path[0], decodedDataOfInput.path[decodedDataOfInput.path.length - 1]);// amount, path
 	console.log('transactionAmount', transactionAmount)
-
 	console.log(pairPool)
 	const slippage = ((Number(transactionAmount) - Number(minAmount)) / Number(minAmount)) * 100;
 	let X = pairPool[0];
@@ -148,14 +147,14 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let marketPrice = X / Y;
 	let paidToken = ((slippage - 0.2) + 100) / 100 * marketPrice
 	let botPurchaseAmount = ((paidToken * Y - X) + Math.sqrt(Math.pow((X - paidToken * Y), 2) + 4 * X * Y * (paidToken + Y))) / 2;
+	console.log("botPurchaseAmount : ", botPurchaseAmount)
 	return botPurchaseAmount;
-
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction?: any) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, signedUniswap2Pair_?: any) => {
 	try {
-		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
-		const poolToken0 = await signedUniswap2Pair_.token0();
-		const pairReserves = await signedUniswap2Pair_.getReserves();
+		const signedUniswap2Pair = signedUniswap2Pair_
+		const poolToken0 = await signedUniswap2Pair.token0();
+		const pairReserves = await signedUniswap2Pair.getReserves();
 
 		let poolIn = "", poolOut = "";
 		if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
@@ -210,6 +209,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 }
 const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string) => {
 	try {
+		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
 		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let buyAmount: number = 0;
 		const txValue = web3.utils.fromWei(transaction.value.toString());
@@ -223,7 +223,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 			amountOut = Number(Format(decodedDataOfInput.amountOut.toString(), decimalOut))
 			isMinAmount = false;
 		}
-		if (amountOutMin === 0 || amountOut === 0) {
+		if (amountOutMin == 0 || amountOut == 0) {
 			if (ID === "TOKEN") {
 				// amountIn  -> amountOutMin
 				// amountOut -> amountInMax
@@ -233,7 +233,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
 				console.log('ETHAmountForGas :', ETHAmountForGas);
-				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction)
+				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, signedUniswap2Pair_)
 				if (profitAmount_ !== null) {
 					if (profitAmount_[0])
 						return [buyAmount, profitAmount_[1]];
@@ -246,7 +246,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				fs.appendFileSync(`./approvedResult.csv`, `Here amountOut : ${amountOut} ` + '\t\n');
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction)
+				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, signedUniswap2Pair_)
 				if (ETHOfProfitAmount !== null) {
 					let realBenefit = Number(ETHOfProfitAmount[0]) - Number(ETHAmountForGas);
 					console.log(`Real: Benefit ${Number(ETHOfProfitAmount[0])} - Gas ${Number(ETHAmountForGas)} = `, realBenefit)
@@ -259,19 +259,18 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					console.log('************ No Benefit ************')
 				}
 			}
-		}
-		else {//calculate slippage
+		} else {//calculate slippage
 			console.log('calculate slippage : => ')
 			try {
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
 					const minAmount = isMinAmount ? amountOutMin : amountOut;
-					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount);
+					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, signedUniswap2Pair_);
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
-					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, signedUniswap2Pair_);
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
@@ -349,38 +348,42 @@ const checkInspectedData = async () => {
 				const toExist = scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] in approvedTokenList;
 				if (toExist) {//working for ETH
 					console.log("this is approved TOKEN : ");
-					const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID)
-					//isProfit[0] = buy amount
-					//isProfit[1] = sell amount
-					//isProfit[2] = ETH of amount
-					//isProfit[3] = ETH of gas (buy & sell)
-					//isProfit[4] = real benefit
-					if (isProfit && isProfit[0] !== null) {
-						if (isProfit[0]) {
-							if (isProfit[4] > BENEFIT_FOR_TX) {
-								console.log('************ Will be run Sandwich ************')
-								let sandresult = await sandwich(scanedTransactions[i].data, scanedTransactions[i].decodedData, isProfit[0], isProfit[1], scanedTransactions[i].ID, isProfit[2], isProfit[3], isProfit[4]);
-								if (sandresult) {
-									scanedTransactions[i].processed = true;
+					if (Number(Format(scanedTransactions[i].data.value.toString())) > 0.001) {
+						const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID)
+						//isProfit[0] = buy amount
+						//isProfit[1] = sell amount
+						//isProfit[2] = ETH of amount
+						//isProfit[3] = ETH of gas (buy & sell)
+						//isProfit[4] = real benefit
+						if (isProfit && isProfit[0] !== null) {
+							if (isProfit[0]) {
+								if (isProfit[4] > BENEFIT_FOR_TX) {
+									console.log('************ Will be run Sandwich ************')
+									let sandresult = await sandwich(scanedTransactions[i].data, scanedTransactions[i].decodedData, isProfit[0], isProfit[1], scanedTransactions[i].ID, isProfit[2], isProfit[3], isProfit[4]);
+									if (sandresult) {
+										scanedTransactions[i].processed = true;
+									} else {
+										console.log('Didn`t Sell or tx Failed')
+										scanedTransactions[i].processed = true;
+									}
 								} else {
-									console.log('Didn`t Sell or tx Failed')
+									console.log('The revenue not enough than minimum revenue')
 									scanedTransactions[i].processed = true;
 								}
 							} else {
-								console.log('The revenue not enough than minimum revenue')
+								console.log('No profit')
 								scanedTransactions[i].processed = true;
 							}
 						} else {
 							console.log('No profit')
+							// scanedTransactions.splice(i, 1); //remove transaction
 							scanedTransactions[i].processed = true;
 						}
+						if (scanedTransactions.length > 100 && scanedTransactions[i].processed === true) {
+							scanedTransactions.splice(i, 1);
+						}
 					} else {
-						console.log('No profit')
-						// scanedTransactions.splice(i, 1); //remove transaction
 						scanedTransactions[i].processed = true;
-					}
-					if (scanedTransactions.length > 1000 && scanedTransactions[i].processed === true) {
-						scanedTransactions.splice(i, 1);
 					}
 				} else {
 					console.log('Not approved token')

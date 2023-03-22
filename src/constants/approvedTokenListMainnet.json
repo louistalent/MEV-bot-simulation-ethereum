@@ -292,5 +292,23 @@
         "symbol": "2080",
         "decimal": 18,
         "pair": "0x47A17ca09e43C6c80691671F924aae9737a780cf"
+    },
+    "0x6f222e04f6c53cc688ffb0abe7206aac66a8ff98": {
+        "name": "ROKO",
+        "symbol": "ROKO",
+        "decimal": 18,
+        "pair": "0xE0076d311a4628516d157aD684DBd2dDaDa3DaFE"
+    },
+    "0xa876f27f13a9eb6e621202cefdd5afc4a90e6457": {
+        "name": "Icy",
+        "symbol": "IC",
+        "decimal": 9,
+        "pair": "0xeAabB2eE89221455302D9FFB5325689fF8f0C37B"
+    },
+    "0x001502f7fbaa8b309962d7bcacbb499b99fc1d1f": {
+        "name": "TENSOR NETWORK",
+        "symbol": "TENSOR",
+        "decimal": 6,
+        "pair": "0x24D91d0C1394fb5A24D3FBD0D4d855E599ba8e3a"
     }
 }
