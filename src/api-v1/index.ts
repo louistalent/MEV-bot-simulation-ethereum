@@ -242,6 +242,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					console.log('************ No Benefit ************')
 				}
 			} else if (ID === "ETH") {
+				fs.appendFileSync(`./approvedResult.csv`, `amountOut : ${amountOut} ` + '\t\n');
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction)
