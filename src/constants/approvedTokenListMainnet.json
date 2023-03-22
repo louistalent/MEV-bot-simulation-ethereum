@@ -280,5 +280,11 @@
         "symbol": "USDT",
         "decimal": 6,
         "pair": "0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852"
+    },
+    "0x5180fbf8b4d360f40a29b83e74596fad5f4dfcff": {
+        "name": "FireDAO",
+        "symbol": "FDT",
+        "decimal": 18,
+        "pair": "0x97E32ce3Fdd61519123cbA7BF7eC2d1ab50bD7d0"
     }
 }
