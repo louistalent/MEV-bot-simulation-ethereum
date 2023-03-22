@@ -136,37 +136,41 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 		console.log('calculateETH :', error)
 	}
 }
-const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, signedUniswap2Pair_: any) => {
+const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any) => {
 	const transactionAmount = await signedUniswap2Router.getAmountsOut(transaction.value, decodedDataOfInput.path);// amount, path
-	const pairPool = await signedUniswap2Pair_.getReserves(UNISWAPV2_FACTORY_ADDRESS, decodedDataOfInput.path[0], decodedDataOfInput.path[decodedDataOfInput.path.length - 1]);// amount, path
 	console.log('transactionAmount', transactionAmount)
 	console.log(pairPool)
+	let X: number;
+	let Y: number;
+	let decimalIn = getDecimal(decodedDataOfInput.path[0])
+	let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
+	if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
+		X = Number(Format(pairPool._reserve0.toString(), decimalIn));
+		Y = Number(Format(pairPool._reserve1.toString(), decimalOut));
+	} else {
+		X = Number(Format(pairPool._reserve1.toString(), decimalIn));
+		Y = Number(Format(pairPool._reserve0.toString(), decimalOut));
+	}
 	const slippage = ((Number(transactionAmount) - Number(minAmount)) / Number(minAmount)) * 100;
-	let X = pairPool[0];
-	let Y = pairPool[1];
 	let marketPrice = X / Y;
 	let paidToken = ((slippage - 0.05) + 100) / 100 * marketPrice
 	let botPurchaseAmount = ((paidToken * Y - X) + Math.sqrt(Math.pow((X - paidToken * Y), 2) + 4 * X * Y * (paidToken + Y))) / 2;
 	return botPurchaseAmount;
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, signedUniswap2Pair_?: any) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, poolToken0: any, pairReserves: any) => {
 	try {
-		const signedUniswap2Pair = signedUniswap2Pair_
-		const poolToken0 = await signedUniswap2Pair.token0();
-		const pairReserves = await signedUniswap2Pair.getReserves();
+		let decimalIn = getDecimal(decodedDataOfInput.path[0])
+		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
 		let poolIn = "", poolOut = "";
 		if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
-			poolIn = web3.utils.fromWei(pairReserves._reserve0.toString())
-			poolOut = web3.utils.fromWei(pairReserves._reserve1.toString())
+			poolIn = Format(pairReserves._reserve0.toString(), decimalIn)
+			poolOut = Format(pairReserves._reserve1.toString(), decimalOut)
 		} else {
-			poolIn = web3.utils.fromWei(pairReserves._reserve1.toString())
-			poolOut = web3.utils.fromWei(pairReserves._reserve0.toString())
+			poolIn = Format(pairReserves._reserve1.toString(), decimalIn)
+			poolOut = Format(pairReserves._reserve0.toString(), decimalOut)
 		}
-
 		let botAmountIn = profitAmount
-		let decimalIn = getDecimal(decodedDataOfInput.path[0])
-		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let fromToken = getSymbol(decodedDataOfInput.path[0])
 		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 
@@ -209,6 +213,8 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string) => {
 	try {
 		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
+		const poolToken0 = await signedUniswap2Pair_.token0();
+		const pairReserves = await signedUniswap2Pair_.getReserves();
 		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 		let buyAmount: number = 0;
 		const txValue = web3.utils.fromWei(transaction.value.toString());
@@ -232,7 +238,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
 				console.log('ETHAmountForGas :', ETHAmountForGas);
-				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, signedUniswap2Pair_)
+				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, poolToken0, pairReserves)
 				if (profitAmount_ !== null) {
 					if (profitAmount_[0])
 						return [buyAmount, profitAmount_[1]];
@@ -245,7 +251,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				fs.appendFileSync(`./approvedResult.csv`, `Here amountOut : ${amountOut} ` + '\t\n');
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, signedUniswap2Pair_)
+				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, poolToken0, pairReserves)
 				if (ETHOfProfitAmount !== null) {
 					let realBenefit = Number(ETHOfProfitAmount[0]) - Number(ETHAmountForGas);
 					console.log(`Real: Benefit ${Number(ETHOfProfitAmount[0])} - Gas ${Number(ETHAmountForGas)} = `, realBenefit)
@@ -264,12 +270,12 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
 					const minAmount = isMinAmount ? amountOutMin : amountOut;
-					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, signedUniswap2Pair_);
+					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, poolToken0, pairReserves);
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
-					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, signedUniswap2Pair_);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, poolToken0, pairReserves);
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
