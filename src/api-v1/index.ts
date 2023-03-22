@@ -270,7 +270,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
 					const minAmount = isMinAmount ? amountOutMin : amountOut;
-					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, poolToken0, pairReserves);
+					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0);
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
