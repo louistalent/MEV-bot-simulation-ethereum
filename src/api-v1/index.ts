@@ -138,7 +138,7 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 }
 const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any) => {
 	const transactionAmount = await signedUniswap2Router.getAmountsOut(transaction.value, decodedDataOfInput.path);// amount, path
-	console.log('transactionAmount', transactionAmount)
+	console.log('transactionAmount : ', transactionAmount)
 	console.log(pairPool)
 	let X: number;
 	let Y: number;
@@ -151,7 +151,7 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 		X = Number(Format(pairPool._reserve1.toString(), decimalIn));
 		Y = Number(Format(pairPool._reserve0.toString(), decimalOut));
 	}
-	const slippage = ((Number(transactionAmount) - Number(minAmount)) / Number(minAmount)) * 100;
+	const slippage = ((Number(transactionAmount[1]) - Number(minAmount)) / Number(minAmount)) * 100;
 	let marketPrice = X / Y;
 	let paidToken = ((slippage - 0.05) + 100) / 100 * marketPrice
 	let botPurchaseAmount = ((paidToken * Y - X) + Math.sqrt(Math.pow((X - paidToken * Y), 2) + 4 * X * Y * (paidToken + Y))) / 2;
@@ -186,7 +186,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		changedPoolOut = changedPoolOut - Number(Format(UserTx, decimalOut));
 		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
 		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})` + '\t\n');
-		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${decodedDataOfInput.amountOutMin}` + '\t\n');
+		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${Format(decodedDataOfInput.amountOutMin, decimalOut)}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
 			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut, decimalOut), Parse(changedPoolIn, decimalIn))
@@ -210,7 +210,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		console.log('calculateProfitAmount', error);
 	}
 }
-const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string) => {
+const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string, type: string) => {
 	try {
 		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
 		const poolToken0 = await signedUniswap2Pair_.token0();
@@ -270,8 +270,14 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
 					const minAmount = isMinAmount ? amountOutMin : amountOut;
-					let botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0);
+					let botPurchaseAmount;
+					if (type === "swapETHForExactTokens") {
+						botPurchaseAmount = Number(txValue);
+					} else if (type === "swapExactETHForTokens") {
+						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0);
+					}
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
+					fs.appendFileSync(`./approvedResult.csv`, `Hash : ${transaction.hash} ` + '\t\n');
 					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
@@ -354,7 +360,7 @@ const checkInspectedData = async () => {
 				if (toExist) {//working for ETH
 					console.log("this is approved TOKEN : ");
 					if (Number(Format(scanedTransactions[i].data.value.toString())) > 0.001) {
-						const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID)
+						const isProfit: any = await estimateProfit(scanedTransactions[i].decodedData, scanedTransactions[i].data, scanedTransactions[i].ID, scanedTransactions[i].type)
 						//isProfit[0] = buy amount
 						//isProfit[1] = sell amount
 						//isProfit[2] = ETH of amount

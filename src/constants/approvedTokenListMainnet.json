@@ -310,5 +310,17 @@
         "symbol": "TENSOR",
         "decimal": 6,
         "pair": "0x24D91d0C1394fb5A24D3FBD0D4d855E599ba8e3a"
+    },
+    "0x26f1513ef109778726579fb30f819967ab17f82a": {
+        "name": "AKON",
+        "symbol": "LOCKEDUP",
+        "decimal": 18,
+        "pair": "0x63F0b41c0Ef4fDF3A4d749ec2E48bF86B8bace7E"
+    },
+    "0xaaaaaa20d9e0e2461697782ef11675f668207961": {
+        "name": "Aurora",
+        "symbol": "AURORA",
+        "decimal": 18,
+        "pair": "0x629D22E6eEaC46A11dBC96be93b90aee9309Be4c"
     }
 }
