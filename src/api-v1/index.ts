@@ -34,6 +34,7 @@ import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json
 import { checkPrices } from "../utils/checkPrice";
 import { getNewTxsFromMempool } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
+import { parse } from 'path';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
 
@@ -150,7 +151,7 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let b = (amountIn / minAmount) * poolIn * poolOut;
 	let x = (Math.sqrt(Math.pow(a, 2) + 4 * b) - a) / 2;
 	let botPurchaseAmount_ = x - poolIn;
-	fs.appendFileSync(`./approvedResult.csv`, `amountIn minamount ${Number(Format(amountIn.toString()))} ${Format(minAmount, decimalOut)} ` + '\t\n');
+	fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount_ amountIn minamount ${botPurchaseAmount_} ${Number(Format(amountIn.toString()))} ${Number(Format(minAmount.toString()))}} ` + '\t\n');
 	return Number(Format(botPurchaseAmount_.toString())); // ETH amount for purchase
 
 }
@@ -272,7 +273,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					if (type === "swapETHForExactTokens") {
 						botPurchaseAmount = Number(txValue);
 					} else if (type === "swapExactETHForTokens") {
-						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0, decimalOut);
+						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, Parse(minAmount, decimalOut), pairReserves, poolToken0, decimalOut);
 					}
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase : ${botPurchaseAmount} ` + '\t\n');
