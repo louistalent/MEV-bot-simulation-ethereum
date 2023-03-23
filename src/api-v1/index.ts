@@ -323,7 +323,7 @@ const analysisTransaction = (tx: any) => {
 		setlog("_validated hash", hash)
 		setlog("_validated hash:method ", method)
 		if (method == "swapExactETHForTokens" || method == "swapETHForExactTokens") {
-			console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
+			console.log(`detected method [${method == "swapExactETHForTokens" || method == "swapETHForExactTokens"}] - ${hash}`)
 			const ID = "ETH"//it's always ETH for moment.
 			if (!scanedTransactions.some((el: any) => el.hash === hash)) {
 				console.log("-------- check start --------")
