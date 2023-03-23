@@ -340,5 +340,11 @@
         "symbol": "SUDO",
         "decimal": 18,
         "pair": "0x1533F61FAcb7cc3A632B12ea9f55D3FBb57309E0"
+    },
+    "0xc25d708d6b733243209b763586eb3f56fd9010b0": {
+        "name": "PPA Token ",
+        "symbol": "PPA",
+        "decimal": 9,
+        "pair": "0x5E69A50E68b4aA618B2E940D1a38F6D60a5409db"
     }
 }
