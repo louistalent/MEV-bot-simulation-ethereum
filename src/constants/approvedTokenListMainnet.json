@@ -364,5 +364,11 @@
         "symbol": "MAGIC",
         "decimal": 18,
         "pair": "0x8C56ca4F7Eb12A7C217bBe36cC427a9dcB66f590"
+    },
+    "0x6c936d4ae98e6d2172db18c16c4b601c99918ee6": {
+        "name": "Life Crypto",
+        "symbol": "LIFE",
+        "decimal": 18,
+        "pair": "0xaEd171a3369e54AFf2601dC92a8d15bBC7e9FA32"
     }
 }

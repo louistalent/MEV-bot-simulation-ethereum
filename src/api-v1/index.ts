@@ -27,7 +27,7 @@ import uniswapRouterABI from '../ABI/uniswapRouterABI.json';
 import uniswapFactoryABI from '../ABI/uniswapFactoryABI.json';
 import uniswapPairABI from '../ABI/uniswapPairABI.json';
 import erc20ABI from '../ABI/erc20ABI.json';
-import { Transaction } from 'mongodb';
+import { MinKey, Transaction } from 'mongodb';
 import { sign } from 'crypto';
 import approvedTokenListTestnet from "../constants/approvedTokenListTestnet.json";
 import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json";
@@ -137,7 +137,7 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 		console.log('calculateETH :', error)
 	}
 }
-const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any, decimalOut: number) => {
+const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: number, pairPool: any, poolToken0: any, decimalOut: number) => {
 	let poolIn, poolOut;
 	if (toLower(decodedDataOfInput.path[0]) == toLower(poolToken0)) {
 		poolIn = Number(pairPool._reserve0);
@@ -151,11 +151,11 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let b = (amountIn / minAmount) * poolIn * poolOut;
 	let x = (Math.sqrt(Math.pow(a, 2) + 4 * b) - a) / 2;
 	let botPurchaseAmount_ = x - poolIn;
-	fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount_ amountIn minamount ${botPurchaseAmount_} ${Number(Format(amountIn.toString()))} ${Number(Format(minAmount.toString()))}} ` + '\t\n');
+	fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount_ amountIn minamount ${botPurchaseAmount_} ${Number(Format(amountIn.toString()))} ${Number(Format(minAmount.toString(), decimalOut))}} ` + '\t\n');
 	return Number(Format(botPurchaseAmount_.toString())); // ETH amount for purchase
 
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction: any, poolToken0: any, pairReserves: any) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction: any, poolToken0: any, pairReserves: any, minAmount: any) => {
 	try {
 		let decimalIn = getDecimal(toLower(decodedDataOfInput.path[0]))
 		let decimalOut = getDecimal(toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1]))
@@ -184,9 +184,9 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 		changedPoolOut = changedPoolOut - Number(Format(UserTx, decimalOut));
 		console.log(`User : from (${userAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
 		fs.appendFileSync(`./approvedResult.csv`, `User : from (${userAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})` + '\t\n');
-		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${Format(decodedDataOfInput.amountOutMin, decimalOut)}` + '\t\n');
+		fs.appendFileSync(`./approvedResult.csv`, `User minAmount: ${Format(minAmount, decimalOut)}` + '\t\n');
 
-		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
+		if (Number(UserTx) >= Number(Format(minAmount, decimalOut))) {
 			let backsell = await signedUniswap2Router.getAmountOut(frontbuy, Parse(changedPoolOut, decimalOut), Parse(changedPoolIn, decimalIn))
 			console.log(`Sell : from (${Format(frontbuy, decimalOut)} ${toToken}) to (${Format(backsell)} ${fromToken})`)
 			fs.appendFileSync(`./approvedResult.csv`, `from (${Format(frontbuy, decimalOut)} ${toToken}) to (${Format(backsell)} ${fromToken})` + '\t\n');
@@ -199,7 +199,7 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 			}
 			return [Revenue, frontbuy]
 		} else {
-			console.log(`User expected min amount is ${Number(Format(decodedDataOfInput.amountOutMin, decimalOut))} but got ${Number(Format(UserTx, decimalOut))}`)
+			console.log(`User expected min amount is ${Number(Format(minAmount, decimalOut))} but got ${Number(Format(UserTx, decimalOut))}`)
 			console.log(`User transaction will fail. Cannot sandwith with ${botAmountIn} ETH`)
 			return null
 		}
@@ -226,6 +226,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 			amountOut = Number(Format(decodedDataOfInput.amountOut.toString(), decimalOut))
 			isMinAmount = false;
 		}
+		const minAmount = isMinAmount ? amountOutMin : amountOut;
 		if (amountOutMin == 0 || amountOut == 0) {
 			if (ID === "TOKEN") {
 				// amountIn  -> amountOutMin
@@ -236,7 +237,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
 				console.log('ETHAmountForGas :', ETHAmountForGas);
-				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves)
+				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves, minAmount)
 				if (profitAmount_ !== null) {
 					if (profitAmount_[0])
 						return [buyAmount, profitAmount_[1]];
@@ -249,7 +250,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				fs.appendFileSync(`./approvedResult.csv`, `Here amountOut : ${amountOut} ` + '\t\n');
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves)
+				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves, minAmount)
 				if (ETHOfProfitAmount !== null) {
 					let realBenefit = Number(ETHOfProfitAmount[0]) - Number(ETHAmountForGas);
 					console.log(`Real: Benefit ${Number(ETHOfProfitAmount[0])} - Gas ${Number(ETHAmountForGas)} = `, realBenefit)
@@ -268,18 +269,17 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
 					fs.appendFileSync(`./approvedResult.csv`, `Hash : ${transaction.hash} ` + '\t\n');
-					const minAmount = isMinAmount ? amountOutMin : amountOut;
 					let botPurchaseAmount;
 					if (type === "swapETHForExactTokens") {
 						botPurchaseAmount = Number(txValue);
 					} else if (type === "swapExactETHForTokens") {
-						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, Parse(minAmount, decimalOut), pairReserves, poolToken0, decimalOut);
+						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, Number(Parse(minAmount, decimalOut)), pairReserves, poolToken0, decimalOut);
 					}
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
-					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction, poolToken0, pairReserves);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction, poolToken0, pairReserves, Parse(minAmount, decimalOut));
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
