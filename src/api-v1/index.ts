@@ -145,11 +145,11 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let decimalIn = getDecimal(decodedDataOfInput.path[0])
 	let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
 	if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
-		X = Number(Format(pairPool._reserve0.toString(), decimalIn));
-		Y = Number(Format(pairPool._reserve1.toString(), decimalOut));
+		Y = Number(Format(pairPool._reserve0.toString(), decimalIn));
+		X = Number(Format(pairPool._reserve1.toString(), decimalOut));
 	} else {
-		X = Number(Format(pairPool._reserve1.toString(), decimalIn));
-		Y = Number(Format(pairPool._reserve0.toString(), decimalOut));
+		Y = Number(Format(pairPool._reserve1.toString(), decimalIn));
+		X = Number(Format(pairPool._reserve0.toString(), decimalOut));
 	}
 	const slippage = ((Number(transactionAmount[1]) - Number(minAmount)) / Number(minAmount)) * 100;
 	let marketPrice = X / Y;
