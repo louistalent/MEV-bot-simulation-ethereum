@@ -136,7 +136,7 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 		console.log('calculateETH :', error)
 	}
 }
-const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any) => {
+const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any, decimalOut: number) => {
 	let poolIn, poolOut;
 	if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
 		poolIn = Number(pairPool._reserve0);
@@ -146,12 +146,12 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 		poolOut = Number(pairPool._reserve0);
 	}
 	let amountIn = Number(transaction.value) * 997 / 1000;
-	let a = amountIn + 2 * poolIn;
-	let b = poolIn * (amountIn + poolIn) - ((amountIn * poolIn * poolOut) / minAmount);
-	let botPurchaseAmount_ = (Math.sqrt(Math.abs(b)) - (a / 2));
-	console.log('botPurchaseAmount_ : ', botPurchaseAmount_)
-	fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase a,b,x ${a} ${b} ${botPurchaseAmount_} ` + '\t\n');
-	return botPurchaseAmount_; // ETH amount for purchase
+	let a = amountIn;
+	let b = (amountIn / minAmount) * poolIn * poolOut;
+	let x = (Math.sqrt(Math.pow(a, 2) + 4 * b) - a) / 2;
+	let botPurchaseAmount_ = x - poolIn;
+	fs.appendFileSync(`./approvedResult.csv`, `amountIn minamount ${Number(Format(amountIn.toString()))} ${Format(minAmount, decimalOut)} ` + '\t\n');
+	return Number(Format(botPurchaseAmount_.toString())); // ETH amount for purchase
 
 }
 const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, poolToken0: any, pairReserves: any) => {
@@ -266,16 +266,16 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 			try {
 				if (ID === "ETH") {
 					// slippage = (transaction amount - expected amount) / expected amount
+					fs.appendFileSync(`./approvedResult.csv`, `Hash : ${transaction.hash} ` + '\t\n');
 					const minAmount = isMinAmount ? amountOutMin : amountOut;
 					let botPurchaseAmount;
 					if (type === "swapETHForExactTokens") {
 						botPurchaseAmount = Number(txValue);
 					} else if (type === "swapExactETHForTokens") {
-						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0);
+						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, minAmount, pairReserves, poolToken0, decimalOut);
 					}
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
-					fs.appendFileSync(`./approvedResult.csv`, `Hash : ${transaction.hash} ` + '\t\n');
-					fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount : ${botPurchaseAmount} ` + '\t\n');
+					fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
 					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, poolToken0, pairReserves);
