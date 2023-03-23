@@ -4,7 +4,7 @@
 require("dotenv").config()
 import * as express from 'express'
 import Web3 from 'web3';
-import fs from 'fs';
+import fs, { truncateSync } from 'fs';
 
 // import { parse as uuidParse } from 'uuid'
 // import { now } from '@src/utils/helper'
@@ -155,7 +155,7 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	return Number(Format(botPurchaseAmount_.toString())); // ETH amount for purchase
 
 }
-const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, poolToken0: any, pairReserves: any) => {
+const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction: any, poolToken0: any, pairReserves: any) => {
 	try {
 		let decimalIn = getDecimal(toLower(decodedDataOfInput.path[0]))
 		let decimalOut = getDecimal(toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1]))
@@ -178,12 +178,12 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 
 		let changedPoolIn = Number(poolIn) + Number(botAmountIn);
 		let changedPoolOut = Number(poolOut) - Number(Format(frontbuy, decimalOut));
-
-		let UserTx = await signedUniswap2Router.getAmountOut(Parse(botAmountIn, decimalIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
-		changedPoolIn = changedPoolIn + botAmountIn;
+		let userAmountIn = Number(Format(transaction.value));
+		let UserTx = await signedUniswap2Router.getAmountOut(Parse(userAmountIn, decimalIn), Parse(changedPoolIn, decimalIn), Parse(changedPoolOut, decimalOut));
+		changedPoolIn = changedPoolIn + userAmountIn;
 		changedPoolOut = changedPoolOut - Number(Format(UserTx, decimalOut));
-		console.log(`User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
-		fs.appendFileSync(`./approvedResult.csv`, `User : from (${botAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})` + '\t\n');
+		console.log(`User : from (${userAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})`)
+		fs.appendFileSync(`./approvedResult.csv`, `User : from (${userAmountIn} ${fromToken}) to (${Format(UserTx, decimalOut)} ${toToken})` + '\t\n');
 		fs.appendFileSync(`./approvedResult.csv`, `User AmountOutMin: ${Format(decodedDataOfInput.amountOutMin, decimalOut)}` + '\t\n');
 
 		if (Number(UserTx) >= Number(Format(decodedDataOfInput.amountOutMin, decimalOut))) {
@@ -236,7 +236,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 				// let ETHAmountOfBenefit = 0;
 				console.log('ETHAmountForGas :', ETHAmountForGas);
-				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, poolToken0, pairReserves)
+				const profitAmount_: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves)
 				if (profitAmount_ !== null) {
 					if (profitAmount_[0])
 						return [buyAmount, profitAmount_[1]];
@@ -249,7 +249,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 				fs.appendFileSync(`./approvedResult.csv`, `Here amountOut : ${amountOut} ` + '\t\n');
 				buyAmount = Number(txValue);
 				let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
-				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, poolToken0, pairReserves)
+				const ETHOfProfitAmount: any = await calculateProfitAmount(decodedDataOfInput, buyAmount, transaction, poolToken0, pairReserves)
 				if (ETHOfProfitAmount !== null) {
 					let realBenefit = Number(ETHOfProfitAmount[0]) - Number(ETHAmountForGas);
 					console.log(`Real: Benefit ${Number(ETHOfProfitAmount[0])} - Gas ${Number(ETHAmountForGas)} = `, realBenefit)
@@ -279,7 +279,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase : ${botPurchaseAmount} ` + '\t\n');
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
-					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, poolToken0, pairReserves);
+					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction, poolToken0, pairReserves);
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]

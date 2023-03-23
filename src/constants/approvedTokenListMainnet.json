@@ -352,5 +352,17 @@
         "symbol": "DERIVIO",
         "decimal": 6,
         "pair": "0x5339982A628b5A45c1f6f61c04F024c5cd91025C"
+    },
+    "0x0aa7efe4945db24d95ca6e117bba65ed326e291a": {
+        "name": "Ojamu Token",
+        "symbol": "OJA",
+        "decimal": 18,
+        "pair": "0x4Bd66f75F73C6D8AC14064537eB32cC420c7aFbe"
+    },
+    "0xb0c7a3ba49c7a6eaba6cd4a96c55a1391070ac9a": {
+        "name": "MAGIC",
+        "symbol": "MAGIC",
+        "decimal": 18,
+        "pair": "0x8C56ca4F7Eb12A7C217bBe36cC427a9dcB66f590"
     }
 }
