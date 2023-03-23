@@ -318,27 +318,23 @@ const analysisTransaction = (tx: any) => {
 	try {
 		const { from, to, hash, input } = tx;
 		const _result = validateDexTx(input)
-
 		if (_result === null) return;
 		const [method, result] = _result;
 		setlog("_validated hash", hash)
 		setlog("_validated hash:method ", method)
-		if (method == "swapExactETHForTokens") {
-			const toExist = result.path[result.path.length - 1] in approvedTokenList;
-			if (toExist) {
-				console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
-				const ID = "ETH"//it's always ETH for moment.
-				if (!scanedTransactions.some((el: any) => el.hash === hash)) {
-					scanedTransactions.push({
-						hash: hash,
-						processed: false,
-						data: tx,
-						decodedData: result,
-						ID: ID,
-						type: "swapExactETHForTokens"
-					})
-				}
-			} else {
+		if (method == "swapExactETHForTokens" || method == "swapETHForExactTokens") {
+			console.log(`detected method [${method == "swapExactETHForTokens"}] - ${hash}`)
+			const ID = "ETH"//it's always ETH for moment.
+			if (!scanedTransactions.some((el: any) => el.hash === hash)) {
+				console.log("-------- check start --------")
+				scanedTransactions.push({
+					hash: hash,
+					processed: false,
+					data: tx,
+					decodedData: result,
+					ID: ID,
+					type: "swapExactETHForTokens"
+				})
 			}
 		} else {
 			console.log("Different Type")
