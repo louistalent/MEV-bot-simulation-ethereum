@@ -137,25 +137,22 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 	}
 }
 const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any) => {
-	const transactionAmount = await signedUniswap2Router.getAmountsOut(transaction.value, decodedDataOfInput.path);// amount, path
-	console.log('transactionAmount : ', transactionAmount)
-	console.log(pairPool)
-	let X: number;
-	let Y: number;
-	let decimalIn = getDecimal(decodedDataOfInput.path[0])
-	let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
+	let poolIn, poolOut;
 	if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
-		Y = Number(Format(pairPool._reserve0.toString(), decimalIn));
-		X = Number(Format(pairPool._reserve1.toString(), decimalOut));
+		poolIn = Number(pairPool._reserve0);
+		poolOut = Number(pairPool._reserve1);
 	} else {
-		Y = Number(Format(pairPool._reserve1.toString(), decimalIn));
-		X = Number(Format(pairPool._reserve0.toString(), decimalOut));
+		poolIn = Number(pairPool._reserve1);
+		poolOut = Number(pairPool._reserve0);
 	}
-	const slippage = ((Number(transactionAmount[1]) - Number(minAmount)) / Number(minAmount)) * 100;
-	let marketPrice = X / Y;
-	let paidToken = ((slippage - 0.05) + 100) / 100 * marketPrice
-	let botPurchaseAmount = ((paidToken * Y - X) + Math.sqrt(Math.pow((X - paidToken * Y), 2) + 4 * X * Y * (paidToken + Y))) / 2;
-	return botPurchaseAmount;
+	let amountIn = Number(transaction.value) * 997 / 1000;
+	let a = amountIn + 2 * poolIn;
+	let b = poolIn * (amountIn + poolIn) - ((amountIn * poolIn * poolOut) / minAmount);
+	let botPurchaseAmount_ = (Math.sqrt(Math.abs(b)) - (a / 2));
+	console.log('botPurchaseAmount_ : ', botPurchaseAmount_)
+	fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase a,b,x ${a} ${b} ${botPurchaseAmount_} ` + '\t\n');
+	return botPurchaseAmount_; // ETH amount for purchase
+
 }
 const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, poolToken0: any, pairReserves: any) => {
 	try {
