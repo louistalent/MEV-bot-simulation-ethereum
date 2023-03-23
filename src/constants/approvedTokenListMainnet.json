@@ -334,5 +334,11 @@
         "symbol": "3DOGE",
         "decimal": 9,
         "pair": "0x419A761188c2Ac9D2493216Ba1497971D6da8464"
+    },
+    "0x3446dd70b2d52a6bf4a5a192d9b0a161295ab7f9": {
+        "name": "SUDO GOVERNANCE TOKEN",
+        "symbol": "SUDO",
+        "decimal": 18,
+        "pair": "0x1533F61FAcb7cc3A632B12ea9f55D3FBb57309E0"
     }
 }
