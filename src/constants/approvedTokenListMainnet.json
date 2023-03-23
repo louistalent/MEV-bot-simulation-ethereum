@@ -323,10 +323,16 @@
         "decimal": 18,
         "pair": "0x629D22E6eEaC46A11dBC96be93b90aee9309Be4c"
     },
-    "0xd41622cfee1ab406a2109fb674e11b6aae1f3942": {
+    "0x3cd3eC12ca889deE0Fd294360a0b9e7312972654": {
         "name": "3 Doge",
         "symbol": "3",
         "decimal": 18,
         "pair": "0x2882B25B29542c4cFbBF51F5EB009EA595946f55"
+    },
+    "0xd41622cfee1ab406a2109fb674e11b6aae1f3942": {
+        "name": "3DOGE",
+        "symbol": "3DOGE",
+        "decimal": 9,
+        "pair": "0x419A761188c2Ac9D2493216Ba1497971D6da8464"
     }
 }
