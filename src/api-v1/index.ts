@@ -349,7 +349,7 @@ const checkInspectedData = async () => {
 		for (let i = 0; i <= scanedTransactions.length - 1; i++) {
 			if (scanedTransactions[i].processed === false) {
 				const fromExist = scanedTransactions[i].decodedData.path[0] in approvedTokenList;
-				const toExist = scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1] in approvedTokenList;
+				const toExist = scanedTransactions[i].decodedData.path[scanedTransactions[i].decodedData.path.length - 1].toLowerCase() in approvedTokenList;
 				if (toExist) {//working for ETH
 					console.log("this is approved TOKEN : ");
 					if (Number(Format(scanedTransactions[i].data.value.toString())) > 0.001) {

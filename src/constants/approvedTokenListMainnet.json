@@ -1,5 +1,5 @@
 {
-    "0x796a4503b444A71b331c9556bEF0815237ddEaBC": {
+    "0x796a4503b444a71b331c9556bef0815237ddeabc": {
         "name": "Ordinal Doge",
         "symbol": "oDOGE",
         "decimal": 18,
@@ -17,91 +17,91 @@
         "decimal": 9,
         "pair": "0xf3033C15162E9565Ba39098d42cEfd95B1dBD601"
     },
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7": {
+    "0xdac17f958d2ee523a2206206994597c13d831ec7": {
         "name": "USDT",
         "symbol": "USDT",
         "decimal": 6,
         "pair": "0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852"
     },
-    "0xFc979087305A826c2B2a0056cFAbA50aad3E6439": {
+    "0xfc979087305a826c2b2a0056cfaba50aad3e6439": {
         "name": "DAFI Token",
         "symbol": "DAFI",
         "decimal": 18,
         "pair": "0xcd4a2F72E3D646e8aDDAb74A68C2175d6A36B0E3"
     },
-    "0x9813037ee2218799597d83D4a5B6F3b6778218d9": {
+    "0x9813037ee2218799597d83d4a5b6f3b6778218d9": {
         "name": "BONE SHIBASWAP",
         "symbol": "BONE",
         "decimal": 18,
         "pair": "0xF7d31825946e7fD99eF07212d34B9Dad84C396b7"
     },
-    "0x2Ed7cd708FD733c92c8CFD7Dc9Fa64F2df19DB9E": {
+    "0x2ed7cd708fd733c92c8cfd7dc9fa64f2df19db9e": {
         "name": "ChatGPT",
         "symbol": "ChatGPT",
         "decimal": 18,
         "pair": "0x23E4fA3F88c904003B9cCE00110C85C9A9c657e3"
     },
-    "0x24dA31e7BB182cb2cABfEF1d88db19C2AE1f5572": {
+    "0x24da31e7bb182cb2cabfef1d88db19c2ae1f5572": {
         "name": "SHIKOKU INU",
         "symbol": "SHIK",
         "decimal": 18,
         "pair": "0x0B9f5cEf1EE41f8CCCaA8c3b4c922Ab406c980CC"
     },
-    "0x8b937AF714aC7E2129bD33D93641F52b665Ca352": {
+    "0x8b937af714ac7e2129bd33d93641f52b665ca352": {
         "name": "JizzRocket",
         "symbol": "JIZZ",
         "decimal": 18,
         "pair": "0x05946AF9DA74499C8a0A2788402E7eEA789BBE9d"
     },
-    "0x02AD335DD3ca11c18cEBBbB583b9613b6289d75F": {
+    "0x02ad335dd3ca11c18cebbbb583b9613b6289d75f": {
         "name": "BPEGd Governance Token",
         "symbol": "BPEG",
         "decimal": 18,
         "pair": "0x3acBe97A79d748011B24E6Df934fD72a98269bfc"
     },
-    "0x02e7F808990638E9e67E1f00313037EDe2362361": {
+    "0x02e7f808990638e9e67e1f00313037ede2362361": {
         "name": "KiboShib",
         "symbol": "KIBSHI",
         "decimal": 18,
         "pair": " 0xf22fdD2BE7c6dA9788e4941A6FfC78CA99d7B15c"
     },
-    "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE": {
+    "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce": {
         "name": "SHIBA INU",
         "symbol": "SHIB",
         "decimal": 18,
         "pair": "0x811beEd0119b4AfCE20D2583EB608C6F7AF1954f"
     },
-    "0xE22CeACdfC2c3AdD635c29C5aF9e3bb0b2b7d67f": {
+    "0xe22ceacdfc2c3add635c29c5af9e3bb0b2b7d67f": {
         "name": "DogeGpt4",
         "symbol": "DogeGpt4",
         "decimal": 9,
         "pair": "0x495Bd3FAA04555d40c3bD525c10eC51b0E431B8b"
     },
-    "0xee4e100507A144E5c45AF48D33491e3C8C6f0Aa8": {
+    "0xee4e100507a144e5c45af48d33491e3c8c6f0aa8": {
         "name": "Old Crypto",
         "symbol": "OC",
         "decimal": 18,
         "pair": "0x917313B75a68b9594A28D1210a24881510aDA571"
     },
-    "0xf1f955016EcbCd7321c7266BccFB96c68ea5E49b": {
+    "0xf1f955016ecbcd7321c7266bccfb96c68ea5e49b": {
         "name": "Rally",
         "symbol": "RLY",
         "decimal": 18,
         "pair": "0x27fD0857F0EF224097001E87e61026E39e1B04d1"
     },
-    "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0": {
+    "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": {
         "name": "Matic Token",
         "symbol": "MATIC",
         "decimal": 18,
         "pair": "0x819f3450dA6f110BA6Ea52195B3beaFa246062dE"
     },
-    "0x1BBf25e71EC48B84d773809B4bA55B6F4bE946Fb": {
+    "0x1bbf25e71ec48b84d773809b4ba55b6f4be946fb": {
         "name": "Vow",
         "symbol": "VOW",
         "decimal": 18,
         "pair": "0x7FdEB46b3a0916630f36E886D675602b1007Fcbb"
     },
-    "0xD13cfD3133239a3c73a9E535A5c4DadEE36b395c": {
+    "0xd13cfd3133239a3c73a9e535a5c4dadee36b395c": {
         "name": "VAIOT Token",
         "symbol": "VAI",
         "decimal": 18,
@@ -119,7 +119,7 @@
         "decimal": 18,
         "pair": "0x54A41C505488f41F700eD30d94a345C2C51c3680"
     },
-    "0xF411903cbC70a74d22900a5DE66A2dda66507255": {
+    "0xf411903cbc70a74d22900a5de66a2dda66507255": {
         "name": "VERA",
         "symbol": "VRA",
         "decimal": 18,
@@ -269,7 +269,7 @@
         "decimal": 18,
         "pair": "0x2A66392317698C5818df7A72a58556049f0Ae6f2"
     },
-    "0xEa65976Cac7BBD785b134CCEe1479F97Aab60566": {
+    "0xea65976cac7bbd785b134ccee1479f97aab60566": {
         "name": "MESS",
         "symbol": "MESS",
         "decimal": 18,
@@ -287,7 +287,7 @@
         "decimal": 18,
         "pair": "0x97E32ce3Fdd61519123cbA7BF7eC2d1ab50bD7d0"
     },
-    "0x47A17ca09e43C6c80691671F924aae9737a780cf": {
+    "0x47a17ca09e43c6c80691671f924aae9737a780cf": {
         "name": "Finance2080",
         "symbol": "2080",
         "decimal": 18,
@@ -323,7 +323,7 @@
         "decimal": 18,
         "pair": "0x629D22E6eEaC46A11dBC96be93b90aee9309Be4c"
     },
-    "0x3cd3eC12ca889deE0Fd294360a0b9e7312972654": {
+    "0x3cd3ec12ca889dee0fd294360a0b9e7312972654": {
         "name": "3 Doge",
         "symbol": "3",
         "decimal": 18,
