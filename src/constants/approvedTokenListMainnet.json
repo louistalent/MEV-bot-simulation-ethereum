@@ -346,5 +346,11 @@
         "symbol": "PPA",
         "decimal": 9,
         "pair": "0x5E69A50E68b4aA618B2E940D1a38F6D60a5409db"
+    },
+    "0xee672d1189ebbea076d4955f983721aeea763262": {
+        "name": "DERIVIO.xyz",
+        "symbol": "DERIVIO",
+        "decimal": 6,
+        "pair": "0x5339982A628b5A45c1f6f61c04F024c5cd91025C"
     }
 }
