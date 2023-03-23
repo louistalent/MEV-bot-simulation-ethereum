@@ -138,7 +138,7 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 }
 const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, minAmount: any, pairPool: any, poolToken0: any, decimalOut: number) => {
 	let poolIn, poolOut;
-	if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
+	if (toLower(decodedDataOfInput.path[0]) == toLower(poolToken0)) {
 		poolIn = Number(pairPool._reserve0);
 		poolOut = Number(pairPool._reserve1);
 	} else {
@@ -156,11 +156,11 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 }
 const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, poolToken0: any, pairReserves: any) => {
 	try {
-		let decimalIn = getDecimal(decodedDataOfInput.path[0])
-		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
+		let decimalIn = getDecimal(toLower(decodedDataOfInput.path[0]))
+		let decimalOut = getDecimal(toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1]))
 
 		let poolIn = "", poolOut = "";
-		if (decodedDataOfInput.path[0].toLowerCase() == poolToken0.toLowerCase()) {
+		if (toLower(decodedDataOfInput.path[0]) == toLower(poolToken0)) {
 			poolIn = Format(pairReserves._reserve0.toString(), decimalIn)
 			poolOut = Format(pairReserves._reserve1.toString(), decimalOut)
 		} else {
@@ -168,8 +168,8 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 			poolOut = Format(pairReserves._reserve0.toString(), decimalOut)
 		}
 		let botAmountIn = profitAmount
-		let fromToken = getSymbol(decodedDataOfInput.path[0])
-		let toToken = getSymbol(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
+		let fromToken = getSymbol(toLower(decodedDataOfInput.path[0]))
+		let toToken = getSymbol(toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1]))
 
 		let frontbuy = await signedUniswap2Router.getAmountOut(Parse(botAmountIn, decimalIn), Parse(poolIn, decimalIn), Parse(poolOut, decimalOut))
 		console.log(`Buy : from (${botAmountIn} ${fromToken}) to (${Format(frontbuy, decimalOut)} ${toToken})`)
@@ -209,10 +209,10 @@ const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: numb
 }
 const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: string, type: string) => {
 	try {
-		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[decodedDataOfInput.path[decodedDataOfInput.path.length - 1]].pair)
+		const signedUniswap2Pair_ = await signedUniswap2Pair(approvedTokenList[toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])].pair)
 		const poolToken0 = await signedUniswap2Pair_.token0();
 		const pairReserves = await signedUniswap2Pair_.getReserves();
-		let decimalOut = getDecimal(decodedDataOfInput.path[decodedDataOfInput.path.length - 1])
+		let decimalOut = getDecimal(toLower(decodedDataOfInput.path[decodedDataOfInput.path.length - 1]))
 		let buyAmount: number = 0;
 		const txValue = web3.utils.fromWei(transaction.value.toString());
 		let amountOutMin: number = 100;
