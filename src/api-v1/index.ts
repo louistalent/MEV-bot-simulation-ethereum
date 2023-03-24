@@ -371,8 +371,6 @@ const analysisTransaction = (tx: any, node: string) => {
 					type: "swapExactETHForTokens"
 				})
 			}
-		} else {
-			console.log("Different Type")
 		}
 
 	} catch (error) {
