@@ -64,14 +64,14 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 export const initApp = async () => {
 	try {
 		console.log(`start scanning : `);
-		_oldTxsOfQuickNode = await getOldTxsFromMempoolQuickNode();
+		// _oldTxsOfQuickNode = await getOldTxsFromMempoolQuickNode();
 		// time = setTimeout(() => {
-		if (_oldTxsOfQuickNode) {
-			inspectQuickNode();
-			cron()
-		} else {
-			console.log('wow stresss')
-		}
+		// if (_oldTxsOfQuickNode) {
+		// 	inspectQuickNode();
+		cron()
+		// } else {
+		// 	console.log('wow stresss')
+		// }
 		// }, 60000);//60 second
 	} catch (error) {
 		console.log('initApp', initApp)
