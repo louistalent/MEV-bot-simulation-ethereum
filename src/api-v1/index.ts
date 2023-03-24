@@ -133,11 +133,13 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 	try {
 		let TIP_ = TIP;
 		let GweiValue = ethers.utils.formatUnits(gasPrice, "gwei");
-		let gasLimit = gasLimit_.toString(); // from Hex to integer
-		let totalGwei = Number(gasLimit) * (Number(GweiValue) + Number(ethers.utils.formatUnits(TIP_, "gwei")));
-		let totalGwei_ = Number(gasLimit) * (Number(GweiValue));
+		let totalGwei = Number(gasLimit_) * (Number(GweiValue) + Number(ethers.utils.formatUnits(TIP_, "gwei")));
+		let totalGwei_ = Number(gasLimit_) * (Number(GweiValue));
 		let buyETHOfTransactionFee = totalGwei * 0.000000001;
 		let sellETHOfTransactionFee = totalGwei_ * 0.000000001;
+		fs.appendFileSync(`./approvedResult.csv`, `buyETHOfTransactionFee: ${buyETHOfTransactionFee} ` + '\t\n');
+		fs.appendFileSync(`./approvedResult.csv`, `sellETHOfTransactionFee: ${sellETHOfTransactionFee} ` + '\t\n');
+
 		return Number(buyETHOfTransactionFee) + Number(sellETHOfTransactionFee);
 	} catch (error: any) {
 		console.log('calculateETH :', error)
