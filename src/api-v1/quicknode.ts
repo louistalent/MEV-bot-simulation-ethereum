@@ -33,6 +33,7 @@ export const getPendingTransactionOfQuick = async () => {
 export const getOldTxsFromMempoolQuickNode = async (): Promise<{ [txId: string]: any }> => {
     try {
         const __pool = {} as { [key: string]: any }
+        console.log('Request data : ')
         const pendingTxs = await getPendingTransactionOfQuick();
         if (pendingTxs) {
             for (let addr in pendingTxs.pending) {
@@ -41,6 +42,7 @@ export const getOldTxsFromMempoolQuickNode = async (): Promise<{ [txId: string]:
                     __pool[k] = v;
                 }
             }
+            console.log('return data : ')
             return __pool;
         }
     } catch (error) {
