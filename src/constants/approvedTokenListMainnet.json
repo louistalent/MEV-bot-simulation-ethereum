@@ -269,18 +269,6 @@
         "decimal": 18,
         "pair": "0x2A66392317698C5818df7A72a58556049f0Ae6f2"
     },
-    "0xea65976cac7bbd785b134ccee1479f97aab60566": {
-        "name": "MESS",
-        "symbol": "MESS",
-        "decimal": 18,
-        "pair": "0x49d97AA9e2395951E990070436e09e385CAD7f91"
-    },
-    "0xdac17f958d2ee523a2206206994597c13d831ec7": {
-        "name": "USDT",
-        "symbol": "USDT",
-        "decimal": 6,
-        "pair": "0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852"
-    },
     "0x5180fbf8b4d360f40a29b83e74596fad5f4dfcff": {
         "name": "FireDAO",
         "symbol": "FDT",
@@ -370,5 +358,11 @@
         "symbol": "LIFE",
         "decimal": 18,
         "pair": "0xaEd171a3369e54AFf2601dC92a8d15bBC7e9FA32"
+    },
+    "0x249e38ea4102d0cf8264d3701f1a0e39c4f2dc3b": {
+        "name": "THE TRUTH",
+        "symbol": "UFO",
+        "decimal": 18,
+        "pair": "0x97E1FcB93ae7267dBAFaD23f7b9AFAA08264CFd8"
     }
 }

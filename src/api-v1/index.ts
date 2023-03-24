@@ -32,9 +32,10 @@ import { sign } from 'crypto';
 import approvedTokenListTestnet from "../constants/approvedTokenListTestnet.json";
 import approvedTokenListMainnet from "../constants/approvedTokenListMainnet.json";
 import { checkPrices } from "../utils/checkPrice";
-import { getNewTxsFromMempool } from './mempool';
+import { getNewTxsFromMempool, getPendingTransaction_web3 } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
 import { parse } from 'path';
+import { getPendingTransactionOfQuick, subscription } from './quicknode';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
 
@@ -66,7 +67,8 @@ export const initApp = async () => {
 		// await getPendingTransaction_()
 		// let txs = await getNewTxsFromMempool();
 		// await findOppotunity(txs)
-		cron()
+		inspectQuickNode();
+		// cron()
 	} catch (error) {
 		console.log('initApp', initApp)
 	}
@@ -88,10 +90,10 @@ const cron = async () => {
 			await findOppotunity(_newTxs)
 		}
 		await checkInspectedData();
+		// await getPendingTransaction_web3()
 	} catch (error) {
 		console.log('cron', error);
 	}
-
 	setTimeout(cron, cronTime)
 }
 const getDecimal = (tokenAddress: string) => {
@@ -343,6 +345,30 @@ const analysisTransaction = (tx: any) => {
 
 	} catch (error) {
 		console.log('analysisTransaction', error)
+	}
+}
+const inspectQuickNode = async () => {
+	// subscription.on("data", (txHash: any) => {
+	// 	setTimeout(async () => {
+	// 		try {
+	// 			let tx = await web3.eth.getTransaction(txHash);
+	// 			if (tx !== undefined) {
+
+	// 			}
+	// 		} catch (err) {
+	// 			console.error(err);
+	// 		}
+	// 	});
+	// });
+	try {
+		let res = await getPendingTransactionOfQuick();
+		if (res) {
+			console.log('quick data')
+			console.log(res)
+			console.log('quick data')
+		}
+	} catch (error) {
+		console.log('inspectQuickNode error ', error)
 	}
 }
 const checkInspectedData = async () => {

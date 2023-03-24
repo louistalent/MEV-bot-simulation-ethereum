@@ -8,6 +8,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "asyncio": "^0.0.2",
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "debug": "~3.1.0",
@@ -17,10 +18,12 @@
     "express-session": "^1.17.1",
     "fs": "^0.0.1-security",
     "hardhat": "^2.6.2",
+    "json": "^11.0.0",
     "mongodb": "^4.3.0",
     "rimraf": "^3.0.2",
     "uuid": "^8.3.2",
-    "web3": "^1.8.2"
+    "web3": "^1.8.2",
+    "websockets": "^0.2.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

@@ -19,7 +19,6 @@ process.on("unhandledRejection", (err: Error) => console.log('rejection', err));
 
 export default async () => {
 	try {
-		console.log("ksdjfksdjfk")
 		await initApp();
 		/* await Redis.connect(); */
 		const app = express()
