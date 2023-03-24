@@ -55,7 +55,8 @@ const Uniswap2Factory = new ethers.Contract(UNISWAPV2_FACTORY_ADDRESS, uniswapFa
 var signedUniswap2Router = Uniswap2Router.connect(signer);
 var signedUniswap2Factory = Uniswap2Factory.connect(signer);
 let scanedTransactions: any = [];
-
+let _oldTxs: any = [];
+let time: any;
 const signedUniswap2Pair = async (pairContractAddress: string) => {
 	const Uniswap2Pair = new ethers.Contract(pairContractAddress, uniswapPairABI, provider);
 	return Uniswap2Pair;
@@ -64,11 +65,14 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 export const initApp = async () => {
 	try {
 		console.log(`start scanning : `);
-		// await getPendingTransaction_()
-		// let txs = await getNewTxsFromMempool();
-		// await findOppotunity(txs)
-		inspectQuickNode();
-		cron()
+		let res = await getPendingTransactionOfQuick()
+		console.log('quick node data')
+		console.log(res)
+		console.log('quick node data')
+		// time = setTimeout(() => {
+		// 	inspectQuickNode();
+		// 	cron()
+		// }, 60000);//60 second
 	} catch (error) {
 		console.log('initApp', initApp)
 	}
@@ -376,11 +380,15 @@ const analysisTransaction = (tx: any, node: string) => {
 }
 const inspectQuickNode = async () => {
 	try {
+		clearTimeout(time)
 		subscription.on("data", async (txHash: any) => {
 			try {
 				let tx = await web3Socket.eth.getTransaction(txHash);
 				if (tx && tx !== undefined && tx !== null && tx !== '') {
-					await findOppotunity([tx], "quicknode")
+					if (!_oldTxs.include(txHash)) {
+						await findOppotunity([tx], "quicknode")
+						_oldTxs.push(txHash)
+					}
 				}
 			} catch (err) {
 				console.error(err);
