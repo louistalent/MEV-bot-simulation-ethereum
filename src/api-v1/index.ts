@@ -137,6 +137,7 @@ const calculateETH = (gasLimit_: any, gasPrice: any) => {
 		let totalGwei_ = Number(gasLimit_) * (Number(GweiValue));
 		let buyETHOfTransactionFee = totalGwei * 0.000000001;
 		let sellETHOfTransactionFee = totalGwei_ * 0.000000001;
+		fs.appendFileSync(`./approvedResult.csv`, `gasLimit_: gasPrice ${gasLimit_} ${gasPrice} ` + '\t\n');
 		fs.appendFileSync(`./approvedResult.csv`, `buyETHOfTransactionFee: ${buyETHOfTransactionFee} ` + '\t\n');
 		fs.appendFileSync(`./approvedResult.csv`, `sellETHOfTransactionFee: ${sellETHOfTransactionFee} ` + '\t\n');
 
