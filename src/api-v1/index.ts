@@ -287,12 +287,18 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					let ETHAmountForGas = calculateETH(transaction.gas, transaction.gasPrice)
 					console.log('ETHAmountForGas :', ETHAmountForGas);
 					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction, poolToken0, pairReserves, Parse(minAmount, decimalOut));
-					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
-					fs.appendFileSync(`./approvedResult.csv`, `realBenefit : ${realBenefit} ` + '\t\n');
-					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
-						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
+					if (ETHAmountOfBenefit !== null) {
+						let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
+						fs.appendFileSync(`./approvedResult.csv`, `realBenefit : ${realBenefit} ` + '\t\n');
+						if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
+							return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
+						} else {
+							console.log("No benefit")
+							return null;
+						}
 					} else {
 						console.log("No benefit")
+						return null;
 					}
 				}
 			} catch (error: any) {
