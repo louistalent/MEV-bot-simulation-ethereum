@@ -347,11 +347,9 @@ const analysisTransaction = (tx: any) => {
 }
 const inspectQuickNode = async () => {
 	try {
-		console.log('data: detect')
 		subscription.on("data", async (txHash: any) => {
 			try {
 				let tx = await web3Socket.eth.getTransaction(txHash);
-				console.log('data: detect2', tx)
 				if (tx !== undefined) {
 					await findOppotunity([tx])
 				}
