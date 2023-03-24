@@ -12,7 +12,7 @@ import fs, { truncateSync } from 'fs';
 // import { isValidCode } from '@src/utils/crc32'
 import setlog from '../setlog'
 import { BigNumber, ethers } from 'ethers'
-import { now, Parse, Format, hexToDecimal } from '../utils/helper'
+import { now, Parse, Format, hexToDecimal, asHex } from '../utils/helper'
 import axios from 'axios'
 // import { Prices } from '../Model'
 import {
@@ -87,7 +87,7 @@ const cron = async () => {
 	try {
 		let _newTxs = await getNewTxsFromMempool();
 		if (_newTxs !== null) {
-			await findOppotunity(_newTxs)
+			await findOppotunity(_newTxs, "minernode")
 		}
 		await checkInspectedData();
 		// await getPendingTransaction_web3()
@@ -297,13 +297,14 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 		console.log("estimateProfit " + error)
 	}
 }
-const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
+const findOppotunity = async (_newTxs: { [txId: string]: any }, node: string) => {
 	try {
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
+			console.log(v)
 			fs.appendFileSync(`./save_tx.csv`, ` Checkable tx: ${v.hash}` + '\t\n');
-			analysisTransaction(v)
+			analysisTransaction(v, node)
 		}
 	} catch (error) {
 		console.log("findOppotunity " + error)
@@ -317,9 +318,9 @@ const validateDexTx = (input: string): [method: string, result: any] | null => {
 	}
 	return null
 }
-const analysisTransaction = (tx: any) => {
+const analysisTransaction = (tx: any, node: string) => {
 	try {
-		const { from, to, hash, input } = tx;
+		const { from, to, hash, input, gas, gasPrice, value } = tx;
 		const _result = validateDexTx(input)
 		if (_result === null) return;
 		const [method, result] = _result;
@@ -328,10 +329,38 @@ const analysisTransaction = (tx: any) => {
 			const ID = "ETH"//it's always ETH for moment.
 			if (!scanedTransactions.some((el: any) => el.hash === hash)) {
 				console.log("-------- check start --------")
+				let txdata;
+				if (node === "minernode") {
+					txdata = tx
+				} else if (node === "quicknode") {
+					try {
+						txdata = {// EIP-1559 tx
+							from: from,
+							to: to,
+							hash: hash,
+							input: input,
+							gasPrice: asHex(gasPrice),
+							gas: asHex(gas),
+							value: asHex(value),
+							maxFeePerGas: asHex(tx.maxFeePerGas),
+							maxPriorityFeePerGas: asHex(tx.maxPriorityFeePerGas)
+						}
+					} catch (error) {
+						txdata = {// Legacy tx
+							from: from,
+							to: to,
+							hash: hash,
+							input: input,
+							gasPrice: asHex(gasPrice),
+							gas: asHex(gas),
+							value: asHex(value)
+						}
+					}
+				}
 				scanedTransactions.push({
 					hash: hash,
 					processed: false,
-					data: tx,
+					data: txdata,
 					decodedData: result,
 					ID: ID,
 					type: "swapExactETHForTokens"
@@ -351,7 +380,7 @@ const inspectQuickNode = async () => {
 			try {
 				let tx = await web3Socket.eth.getTransaction(txHash);
 				if (tx && tx !== undefined && tx !== null && tx !== '') {
-					await findOppotunity([tx])
+					await findOppotunity([tx], "quicknode")
 				}
 			} catch (err) {
 				console.error(err);

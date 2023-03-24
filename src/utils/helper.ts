@@ -109,3 +109,6 @@ export const generateCode = () => {
 }
 export const generateID = () => Math.round(new Date().getTime() / 1000 + Math.random() * 5001221051)
 export const hexToDecimal = (hex: any) => parseInt(hex, 16);
+export const asHex = (hex: number | string) => {
+	return "0x" + Number(hex).toString(16);
+}
