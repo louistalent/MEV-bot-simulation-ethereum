@@ -66,9 +66,11 @@ export const initApp = async () => {
 		console.log(`start scanning : `);
 		_oldTxsOfQuickNode = await getOldTxsFromMempoolQuickNode();
 		// time = setTimeout(() => {
-		if (_oldTxsOfQuickNode.length > 0) {
+		if (_oldTxsOfQuickNode) {
 			inspectQuickNode();
 			cron()
+		} else {
+			console.log('wow stresss')
 		}
 		// }, 60000);//60 second
 	} catch (error) {
