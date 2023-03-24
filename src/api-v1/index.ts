@@ -385,7 +385,7 @@ const inspectQuickNode = async () => {
 				let tx = await web3Socket.eth.getTransaction(txHash);
 				if (tx && tx !== undefined && tx !== null && tx !== '') {
 					for (let k in _oldTxsOfQuickNode) {
-						if (_oldTxsOfQuickNode[k].hash != txHash) {
+						if (toLower(_oldTxsOfQuickNode[k].hash) !== toLower(tx.hash)) {
 							await findOppotunity([tx], "quicknode")
 						}
 					}
