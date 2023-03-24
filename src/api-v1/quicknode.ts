@@ -30,5 +30,23 @@ export const getPendingTransactionOfQuick = async () => {
         console.log(err.message, err.stack)
     }
 }
+export const getOldTxsFromMempoolQuickNode = async (): Promise<{ [txId: string]: any }> => {
+    try {
+        const __pool = {} as { [key: string]: any }
+        const pendingTxs = await getPendingTransactionOfQuick();
+        if (pendingTxs) {
+            for (let addr in pendingTxs.pending) {
+                for (let k in pendingTxs.pending[addr]) {
+                    const v = pendingTxs.pending[addr][k];
+                    __pool[k] = v;
+                }
+            }
+            return __pool;
+        }
+    } catch (error) {
+        console.log('getNewTxs', error)
+    }
+    return null
+}
 
 

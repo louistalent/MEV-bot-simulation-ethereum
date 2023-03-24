@@ -35,7 +35,7 @@ import { checkPrices } from "../utils/checkPrice";
 import { getNewTxsFromMempool, getPendingTransaction_web3 } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
 import { parse } from 'path';
-import { getPendingTransactionOfQuick, subscription, web3Socket } from './quicknode';
+import { getOldTxsFromMempoolQuickNode, getPendingTransactionOfQuick, subscription, web3Socket } from './quicknode';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
 
@@ -55,8 +55,7 @@ const Uniswap2Factory = new ethers.Contract(UNISWAPV2_FACTORY_ADDRESS, uniswapFa
 var signedUniswap2Router = Uniswap2Router.connect(signer);
 var signedUniswap2Factory = Uniswap2Factory.connect(signer);
 let scanedTransactions: any = [];
-let _oldTxs: any = [];
-let time: any;
+let _oldTxsOfQuickNode: any;
 const signedUniswap2Pair = async (pairContractAddress: string) => {
 	const Uniswap2Pair = new ethers.Contract(pairContractAddress, uniswapPairABI, provider);
 	return Uniswap2Pair;
@@ -65,13 +64,12 @@ const signedUniswap2Pair = async (pairContractAddress: string) => {
 export const initApp = async () => {
 	try {
 		console.log(`start scanning : `);
-		let res = await getPendingTransactionOfQuick()
-		console.log('quick node data')
-		console.log(res)
-		console.log('quick node data')
+		_oldTxsOfQuickNode = await getOldTxsFromMempoolQuickNode();
 		// time = setTimeout(() => {
-		// 	inspectQuickNode();
-		// 	cron()
+		if (_oldTxsOfQuickNode.length > 0) {
+			inspectQuickNode();
+			cron()
+		}
 		// }, 60000);//60 second
 	} catch (error) {
 		console.log('initApp', initApp)
@@ -231,6 +229,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 		} catch (error: any) {
 			amountOut = Number(Format(decodedDataOfInput.amountOut.toString(), decimalOut))
 			isMinAmount = false;
+			fs.appendFileSync(`./approvedResult.csv`, `catch error amountOut: ${amountOut} ` + '\t\n');
 		}
 		const minAmount = isMinAmount ? amountOutMin : amountOut;
 		if (amountOutMin == 0 || amountOut == 0) {
@@ -279,7 +278,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					if (type === "swapETHForExactTokens") {
 						botPurchaseAmount = Number(txValue);
 					} else if (type === "swapExactETHForTokens") {
-						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, Number(Parse(minAmount, decimalOut)), pairReserves, poolToken0, decimalOut);
+						botPurchaseAmount = await botAmountForPurchase(transaction, decodedDataOfInput, Number(Parse(amountOutMin, decimalOut)), pairReserves, poolToken0, decimalOut);
 					}
 					console.log('botPurchaseAmount: ', botPurchaseAmount)
 					fs.appendFileSync(`./approvedResult.csv`, `botAmountForPurchase : ${botPurchaseAmount} ` + '\t\n');
@@ -287,6 +286,7 @@ const estimateProfit = async (decodedDataOfInput: any, transaction: any, ID: str
 					console.log('ETHAmountForGas :', ETHAmountForGas);
 					let ETHAmountOfBenefit = await calculateProfitAmount(decodedDataOfInput, botPurchaseAmount, transaction, poolToken0, pairReserves, Parse(minAmount, decimalOut));
 					let realBenefit = Number(ETHAmountOfBenefit[0]) - Number(ETHAmountForGas);
+					fs.appendFileSync(`./approvedResult.csv`, `realBenefit : ${realBenefit} ` + '\t\n');
 					if (Number(ETHAmountOfBenefit[0]) > ETHAmountForGas) {
 						return [botPurchaseAmount, ETHAmountOfBenefit[1], Number(ETHAmountOfBenefit[0]), Number(ETHAmountForGas), realBenefit]
 					} else {
@@ -380,14 +380,16 @@ const analysisTransaction = (tx: any, node: string) => {
 }
 const inspectQuickNode = async () => {
 	try {
-		clearTimeout(time)
+		console.log('----------start inspectQuickNode------------')
 		subscription.on("data", async (txHash: any) => {
 			try {
 				let tx = await web3Socket.eth.getTransaction(txHash);
 				if (tx && tx !== undefined && tx !== null && tx !== '') {
-					if (!_oldTxs.include(txHash)) {
-						await findOppotunity([tx], "quicknode")
-						_oldTxs.push(txHash)
+					for (let k in _oldTxsOfQuickNode) {
+						console.log(_oldTxsOfQuickNode[k].hash)
+						if (_oldTxsOfQuickNode[k].hash != txHash) {
+							await findOppotunity([tx], "quicknode")
+						}
 					}
 				}
 			} catch (err) {
