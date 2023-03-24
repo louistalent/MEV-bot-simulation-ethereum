@@ -368,7 +368,7 @@ const analysisTransaction = (tx: any, node: string) => {
 					data: txdata,
 					decodedData: result,
 					ID: ID,
-					type: "swapExactETHForTokens"
+					type: method
 				})
 			}
 		}
