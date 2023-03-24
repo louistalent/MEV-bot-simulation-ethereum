@@ -350,7 +350,7 @@ const inspectQuickNode = async () => {
 		subscription.on("data", async (txHash: any) => {
 			try {
 				let tx = await web3Socket.eth.getTransaction(txHash);
-				if (tx !== undefined) {
+				if (tx && tx !== undefined && tx !== null && tx !== '') {
 					await findOppotunity([tx])
 				}
 			} catch (err) {
