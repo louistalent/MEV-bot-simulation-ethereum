@@ -308,7 +308,6 @@ const findOppotunity = async (_newTxs: { [txId: string]: any }, node: string) =>
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
-			console.log(v)
 			fs.appendFileSync(`./save_tx.csv`, ` Checkable tx: ${v.hash}` + '\t\n');
 			analysisTransaction(v, node)
 		}
