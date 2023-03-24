@@ -17,13 +17,14 @@ let options = {
     },
 };
 
-const web3 = new Web3(new Web3.providers.WebsocketProvider(url, options));
-export const subscription = web3.eth.subscribe("pendingTransactions", (err: any, res: any) => {
+export const web3Socket = new Web3(new Web3.providers.WebsocketProvider(url, options));
+export const subscription = web3Socket.eth.subscribe("pendingTransactions", (err: any, res: any) => {
     if (err) console.error(err);
 });
 export const getPendingTransactionOfQuick = async () => {
     try {
         let res = await rpc(url_https, { "jsonrpc": "2.0", "method": "txpool_content", "params": [], "id": 1 });
+        // if it's free node, 20~30 second for once request
         return res;
     } catch (err) {
         console.log(err.message, err.stack)

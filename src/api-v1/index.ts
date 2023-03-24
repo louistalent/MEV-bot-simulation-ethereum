@@ -35,7 +35,7 @@ import { checkPrices } from "../utils/checkPrice";
 import { getNewTxsFromMempool, getPendingTransaction_web3 } from './mempool';
 import rpc, { latestBlockInfo } from './blockchain';
 import { parse } from 'path';
-import { getPendingTransactionOfQuick, subscription } from './quicknode';
+import { getPendingTransactionOfQuick, subscription, web3Socket } from './quicknode';
 
 const approvedTokenList = TESTNET ? approvedTokenListTestnet as any : approvedTokenListMainnet as any;
 
@@ -68,7 +68,7 @@ export const initApp = async () => {
 		// let txs = await getNewTxsFromMempool();
 		// await findOppotunity(txs)
 		inspectQuickNode();
-		// cron()
+		cron()
 	} catch (error) {
 		console.log('initApp', initApp)
 	}
@@ -302,7 +302,7 @@ const findOppotunity = async (_newTxs: { [txId: string]: any }) => {
 		for (let hash in _newTxs) {
 			const v = _newTxs[hash];
 			if (!v.to || v.input === '0x' || whitelists.indexOf(toLower(v.to)) === -1) continue;
-			setlog("_checkable tx", hash)
+			fs.appendFileSync(`./save_tx.csv`, ` Checkable tx: ${v.hash}` + '\t\n');
 			analysisTransaction(v)
 		}
 	} catch (error) {
@@ -323,8 +323,6 @@ const analysisTransaction = (tx: any) => {
 		const _result = validateDexTx(input)
 		if (_result === null) return;
 		const [method, result] = _result;
-		setlog("_validated hash", hash)
-		setlog("_validated hash:method ", method)
 		if (method == "swapExactETHForTokens" || method == "swapETHForExactTokens") {
 			console.log(`detected method [${method == "swapExactETHForTokens" || method == "swapETHForExactTokens"}] - ${hash}`)
 			const ID = "ETH"//it's always ETH for moment.
@@ -348,25 +346,19 @@ const analysisTransaction = (tx: any) => {
 	}
 }
 const inspectQuickNode = async () => {
-	// subscription.on("data", (txHash: any) => {
-	// 	setTimeout(async () => {
-	// 		try {
-	// 			let tx = await web3.eth.getTransaction(txHash);
-	// 			if (tx !== undefined) {
-
-	// 			}
-	// 		} catch (err) {
-	// 			console.error(err);
-	// 		}
-	// 	});
-	// });
 	try {
-		let res = await getPendingTransactionOfQuick();
-		if (res) {
-			console.log('quick data')
-			console.log(res)
-			console.log('quick data')
-		}
+		console.log('data: detect')
+		subscription.on("data", async (txHash: any) => {
+			try {
+				let tx = await web3Socket.eth.getTransaction(txHash);
+				console.log('data: detect2', tx)
+				if (tx !== undefined) {
+					await findOppotunity([tx])
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		});
 	} catch (error) {
 		console.log('inspectQuickNode error ', error)
 	}
