@@ -1,22 +1,4 @@
 {
-    "0x796a4503b444a71b331c9556bef0815237ddeabc": {
-        "name": "Ordinal Doge",
-        "symbol": "oDOGE",
-        "decimal": 18,
-        "pair": "0x46C752B1Da67ce438e2b73e47E3464038B3799F3"
-    },
-    "0x8f828a0644f12fa352888e645a90333d30f6fd7d": {
-        "name": "Rinia Inu",
-        "symbol": "RINIA",
-        "decimal": 9,
-        "pair": "0x1b425529C9d7472603E2dCf125Fd195f71dFB412"
-    },
-    "0x8ea12d23f469543a61c4f6f7ffdfdbaa7635609d": {
-        "name": "Shib Killer",
-        "symbol": "FIRE",
-        "decimal": 9,
-        "pair": "0xf3033C15162E9565Ba39098d42cEfd95B1dBD601"
-    },
     "0xdac17f958d2ee523a2206206994597c13d831ec7": {
         "name": "USDT",
         "symbol": "USDT",
@@ -34,12 +16,6 @@
         "symbol": "BONE",
         "decimal": 18,
         "pair": "0xF7d31825946e7fD99eF07212d34B9Dad84C396b7"
-    },
-    "0x2ed7cd708fd733c92c8cfd7dc9fa64f2df19db9e": {
-        "name": "ChatGPT",
-        "symbol": "ChatGPT",
-        "decimal": 18,
-        "pair": "0x23E4fA3F88c904003B9cCE00110C85C9A9c657e3"
     },
     "0x24da31e7bb182cb2cabfef1d88db19c2ae1f5572": {
         "name": "SHIKOKU INU",
@@ -70,12 +46,6 @@
         "symbol": "SHIB",
         "decimal": 18,
         "pair": "0x811beEd0119b4AfCE20D2583EB608C6F7AF1954f"
-    },
-    "0xe22ceacdfc2c3add635c29c5af9e3bb0b2b7d67f": {
-        "name": "DogeGpt4",
-        "symbol": "DogeGpt4",
-        "decimal": 9,
-        "pair": "0x495Bd3FAA04555d40c3bD525c10eC51b0E431B8b"
     },
     "0xee4e100507a144e5c45af48d33491e3c8c6f0aa8": {
         "name": "Old Crypto",
@@ -113,12 +83,6 @@
         "decimal": 18,
         "pair": "0x006Ab11E89e7246CB8c0F7BdAa8C2713374b1676"
     },
-    "0xeee2f0c81c721b48636fc6955e41214e313f16d7": {
-        "name": "Vyper",
-        "symbol": "VY",
-        "decimal": 18,
-        "pair": "0x54A41C505488f41F700eD30d94a345C2C51c3680"
-    },
     "0xf411903cbc70a74d22900a5de66a2dda66507255": {
         "name": "VERA",
         "symbol": "VRA",
@@ -136,12 +100,6 @@
         "symbol": "Metis",
         "decimal": 18,
         "pair": "0xd03dffD02Db4B076e3eeD9272a6A243a23DE16e3"
-    },
-    "0x0b521605bb5639d22d0a18ed7393481ad686331b": {
-        "name": "Neyma Inu",
-        "symbol": "NEYMA",
-        "decimal": 18,
-        "pair": "0x55f26293a2cF63589fdb4aE60E286Cfd6b40595C"
     },
     "0x2bd0fb740e403b505a3146f9ac02df883fd5c3fc": {
         "name": "K9",
@@ -269,18 +227,6 @@
         "decimal": 18,
         "pair": "0x2A66392317698C5818df7A72a58556049f0Ae6f2"
     },
-    "0x5180fbf8b4d360f40a29b83e74596fad5f4dfcff": {
-        "name": "FireDAO",
-        "symbol": "FDT",
-        "decimal": 18,
-        "pair": "0x97E32ce3Fdd61519123cbA7BF7eC2d1ab50bD7d0"
-    },
-    "0x47a17ca09e43c6c80691671f924aae9737a780cf": {
-        "name": "Finance2080",
-        "symbol": "2080",
-        "decimal": 18,
-        "pair": "0x47A17ca09e43C6c80691671F924aae9737a780cf"
-    },
     "0x6f222e04f6c53cc688ffb0abe7206aac66a8ff98": {
         "name": "ROKO",
         "symbol": "ROKO",
@@ -293,53 +239,17 @@
         "decimal": 9,
         "pair": "0xeAabB2eE89221455302D9FFB5325689fF8f0C37B"
     },
-    "0x001502f7fbaa8b309962d7bcacbb499b99fc1d1f": {
-        "name": "TENSOR NETWORK",
-        "symbol": "TENSOR",
-        "decimal": 6,
-        "pair": "0x24D91d0C1394fb5A24D3FBD0D4d855E599ba8e3a"
-    },
-    "0x26f1513ef109778726579fb30f819967ab17f82a": {
-        "name": "AKON",
-        "symbol": "LOCKEDUP",
-        "decimal": 18,
-        "pair": "0x63F0b41c0Ef4fDF3A4d749ec2E48bF86B8bace7E"
-    },
     "0xaaaaaa20d9e0e2461697782ef11675f668207961": {
         "name": "Aurora",
         "symbol": "AURORA",
         "decimal": 18,
         "pair": "0x629D22E6eEaC46A11dBC96be93b90aee9309Be4c"
     },
-    "0x3cd3ec12ca889dee0fd294360a0b9e7312972654": {
-        "name": "3 Doge",
-        "symbol": "3",
-        "decimal": 18,
-        "pair": "0x2882B25B29542c4cFbBF51F5EB009EA595946f55"
-    },
-    "0xd41622cfee1ab406a2109fb674e11b6aae1f3942": {
-        "name": "3DOGE",
-        "symbol": "3DOGE",
-        "decimal": 9,
-        "pair": "0x419A761188c2Ac9D2493216Ba1497971D6da8464"
-    },
     "0x3446dd70b2d52a6bf4a5a192d9b0a161295ab7f9": {
         "name": "SUDO GOVERNANCE TOKEN",
         "symbol": "SUDO",
         "decimal": 18,
         "pair": "0x1533F61FAcb7cc3A632B12ea9f55D3FBb57309E0"
-    },
-    "0xc25d708d6b733243209b763586eb3f56fd9010b0": {
-        "name": "PPA Token ",
-        "symbol": "PPA",
-        "decimal": 9,
-        "pair": "0x5E69A50E68b4aA618B2E940D1a38F6D60a5409db"
-    },
-    "0xee672d1189ebbea076d4955f983721aeea763262": {
-        "name": "DERIVIO.xyz",
-        "symbol": "DERIVIO",
-        "decimal": 6,
-        "pair": "0x5339982A628b5A45c1f6f61c04F024c5cd91025C"
     },
     "0x0aa7efe4945db24d95ca6e117bba65ed326e291a": {
         "name": "Ojamu Token",
@@ -364,11 +274,5 @@
         "symbol": "UFO",
         "decimal": 18,
         "pair": "0x97E1FcB93ae7267dBAFaD23f7b9AFAA08264CFd8"
-    },
-    "0x993864e43caa7f7f12953ad6feb1d1ca635b875f": {
-        "name": "Singularity Dao",
-        "symbol": "SDAO",
-        "decimal": 18,
-        "pair": "0x424485f89ea52839fdB30640Eb7DD7E0078E12fb"
     }
 }
