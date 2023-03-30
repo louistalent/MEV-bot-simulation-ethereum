@@ -211,19 +211,18 @@ contract ERC20 is Context {
         return _balances[account];
     }
 
-    function transfer(address recipient, uint256 amount)
-        external
-        returns (bool)
-    {
+    function transfer(
+        address recipient,
+        uint256 amount
+    ) external returns (bool) {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
 
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256)
-    {
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -249,10 +248,10 @@ contract ERC20 is Context {
         return true;
     }
 
-    function increaseAllowance(address spender, uint256 addedValue)
-        public
-        returns (bool)
-    {
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) public returns (bool) {
         _approve(
             _msgSender(),
             spender,
@@ -261,10 +260,10 @@ contract ERC20 is Context {
         return true;
     }
 
-    function decreaseAllowance(address spender, uint256 subtractedValue)
-        public
-        returns (bool)
-    {
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public returns (bool) {
         _approve(
             _msgSender(),
             spender,
@@ -299,11 +298,7 @@ contract ERC20 is Context {
         emit Transfer(account, address(0), amount);
     }
 
-    function _approve(
-        address owner,
-        address spender,
-        uint256 amount
-    ) internal {
+    function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "BEP20: approve from the zero address");
         require(spender != address(0), "BEP20: approve to the zero address");
 

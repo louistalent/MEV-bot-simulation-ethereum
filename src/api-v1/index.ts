@@ -162,7 +162,6 @@ const botAmountForPurchase = async (transaction: any, decodedDataOfInput: any, m
 	let botPurchaseAmount_ = x - poolIn;
 	fs.appendFileSync(`./approvedResult.csv`, `botPurchaseAmount_ amountIn minamount ${botPurchaseAmount_} ${Number(Format(amountIn.toString()))} ${Number(Format(minAmount.toString(), decimalOut))}} ` + '\t\n');
 	return Number(Format(botPurchaseAmount_.toString())); // ETH amount for purchase
-
 }
 const calculateProfitAmount = async (decodedDataOfInput: any, profitAmount: number, transaction: any, poolToken0: any, pairReserves: any, minAmount: any) => {
 	try {

@@ -44,7 +44,7 @@ module.exports = {
 			accounts: [process.env.BOTADDRESS]
 		},
 		ethereum: {
-			url: "http://127.0.0.1:8545",
+			url: "http://localhost:8545",
 			accounts: [process.env.BOTADDRESS]
 		},
 		ethereum_: {
